@@ -13,11 +13,18 @@ connection = mysql.connector.connect(
     database="tankstellenData"
 )
 
+
+# Ermittlung der durchschnittlichen Kraftstoffpreise
+# mit der URL /preise und den URL-Parametern:
+# filter=all,
+# begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
+# end=[endZeitpunkt, default currentTimestamp]
 @app.route('/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
     cursor = connection.cursor()
 
+    # Für alle Kraftstoffarten
     if filter == "all":
         begin = request.args.get('begin', default="15-01-2021 00:00:00", type=str)
         end = request.args.get('end', default=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), type=str)
@@ -34,15 +41,21 @@ def preise():
     return "Anfrage nicht gefunden."
 
 
-
+# Anzeige von Tankstellen mit der URL /tankstellen und den URL-Parametern:
+# filter = [all/id, default all]
+# id = [tankstellenID, nur bei filter=id
 @app.route('/tankstellen')
 def tankstellen():
     filter = request.args.get('filter', default="all", type=str)
     cursor = connection.cursor()
+
+    # Zeigt alle Tankstellen an
     if filter == "all":
         cursor.execute("select id, name, place, street, housenumber from Tankstellen;")
         return sqlToJSONTankstelle(cursor.fetchall())
 
+    # Zeigt eine Tankstelle an
+    # Benötigter Parameter: id = [tankstellenID, default 0]
     if filter == "id":
         t_id = request.args.get('id', default="0", type=str)
         if t_id == "0":
