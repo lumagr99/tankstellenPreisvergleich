@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 import mysql.connector
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -11,6 +12,28 @@ connection = mysql.connector.connect(
     password="tankstellenData2021",
     database="tankstellenData"
 )
+
+@app.route('/preise')
+def preise():
+    filter = request.args.get('filter', default='all', type=str)
+    cursor = connection.cursor()
+
+    if filter == "all":
+        begin = request.args.get('begin', default="15-01-2021 00:00:00", type=str)
+        end = request.args.get('end', default=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), type=str)
+        cursor.execute\
+            ("select avg(e10), avg(e5), avg(diesel) from Preise where "
+             "timedate BETWEEN '" + begin + "' "
+             "AND '" + end + "' AND e5 <> 0 AND e10 <> 0 AND diesel <> 0")
+        result = cursor.fetchall()
+        print(result)
+        ret = {'e10' : result[0][0], 'e5' : result[0][1], 'diesel' : result[0][2],
+               'time' : {'begin' : begin, 'end' : end}}
+        return ret
+
+    return "Anfrage nicht gefunden."
+
+
 
 @app.route('/tankstellen')
 def tankstellen():
@@ -28,7 +51,7 @@ def tankstellen():
             cursor.execute("select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
             return sqlToJSONTankstelle(cursor.fetchall())
 
-    return 'Hello, World!' + filter
+    return "Anfrage nicht gefunden."
 
 
 # ONLY id, name, place, stress, housenumber
