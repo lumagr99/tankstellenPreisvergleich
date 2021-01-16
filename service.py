@@ -36,3 +36,5 @@ def tankstellen():
 
 if __name__ == '__main__':
     app.run()
+
+#install flask
