@@ -12,16 +12,16 @@ connection = mysql.connector.connect(
     database="tankstellenData"
 )
 
-#TODO SQL to JSON dump with parameter names
+
+# TODO SQL to JSON dump with parameter names
 
 @app.route('/tankstellen')
 def tankstellen():
     filter = request.args.get('filter', default="all", type=str)
-
     cursor = connection.cursor()
     if filter == "all":
         cursor.execute("select id, name, place, street, housenumber from Tankstellen;")
-        return json.dumps(cursor.fetchall())
+        return sqlToJSONTankstelle(cursor.fetchall())
 
     if filter == "id":
         t_id = request.args.get('id', default="0", type=str)
@@ -29,12 +29,30 @@ def tankstellen():
             return "No ID!"
         else:
             cursor.execute("select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
-            return json.dumps(cursor.fetchall())
+            return sqlToJSONTankstelle(cursor.fetchall())
 
     return 'Hello, World!' + filter
+
+
+# ONLY id, name, place, stress, housenumber
+def sqlToJSONTankstelle(result):
+    data = []
+
+    for res in result:
+        #x = (res[0], res[1], res[2], res[3], res[4])
+        x = {
+            "id": res[0],
+            "name": res[1],
+            "place": res[2],
+            "street": res[3],
+            "housenumber": res[4]
+        }
+        data.append(x)
+
+    return json.dumps(data)
 
 
 if __name__ == '__main__':
     app.run()
 
-#install flask
+# install flask
