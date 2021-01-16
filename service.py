@@ -12,9 +12,6 @@ connection = mysql.connector.connect(
     database="tankstellenData"
 )
 
-
-# TODO SQL to JSON dump with parameter names
-
 @app.route('/tankstellen')
 def tankstellen():
     filter = request.args.get('filter', default="all", type=str)
