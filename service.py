@@ -37,6 +37,7 @@ def preise():
         amount = request.args.get('amount', default=200, type=str)
 
         #TODO faktoren mit 0 aussortieren
+        #TODO zusammenfassen von mehreren Tankstellenwerten der selben Tankstelle zu einem Wert
         cursor = connection.cursor()
         cursor.execute("select id, "
                        "e5, (e5/" + str(avg['e5']) + ") as 'e5Faktor', "
