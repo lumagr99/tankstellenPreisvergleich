@@ -49,14 +49,23 @@ def preise():
         temp = cursor.fetchall()
         ret = []
         for current in temp:
+            e5 = {
+                "preis": current[1],
+                "faktor": current[2]
+            }
+            e10 = {
+                "preis": current[3],
+                "faktor": current[4]
+            }
+            diesel = {
+                "preis": current[5],
+                "faktor": current[6]
+            }
             x = {
                 "id": current[0],
-                "e5": current[1],
-                "e5Faktor": current[2],
-                "e10": current[3],
-                "e10Faktor": current[4],
-                "diesel": current[5],
-                "dieselFaktor": current[6],
+                "e5": e5,
+                "e10": e10,
+                "diesel": diesel,
                 "time": str(current[7])
             }
             ret.append(x)
