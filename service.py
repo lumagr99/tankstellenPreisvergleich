@@ -16,27 +16,30 @@ connection = mysql.connector.connect(
 
 # Ermittlung der durchschnittlichen Kraftstoffpreise
 # mit der URL /preise und den URL-Parametern:
-# filter=all,
+# filter=[all/durchschnitt],
 # begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
 # end=[endZeitpunkt, default currentTimestamp]
 @app.route('/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
-    cursor = connection.cursor()
 
-    # Für alle Kraftstoffarten
+    begin = request.args.get('begin', default="2021-01-16 00:00:00", type=str)
+    end = request.args.get('end', default=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), type=str)
+
+    # Durchschnittspreise für alle Kraftstoffarten
+    if filter == "durchschnitt":
+        return json.dumps(durchschnittsWerte(begin, end))
     if filter == "all":
-        begin = request.args.get('begin', default="15-01-2021 00:00:00", type=str)
-        end = request.args.get('end', default=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), type=str)
-        cursor.execute\
-            ("select avg(e10), avg(e5), avg(diesel) from Preise where "
-             "timedate BETWEEN '" + begin + "' "
-             "AND '" + end + "' AND e5 <> 0 AND e10 <> 0 AND diesel <> 0")
-        result = cursor.fetchall()
-        print(result)
-        ret = {'e10' : result[0][0], 'e5' : result[0][1], 'diesel' : result[0][2],
-               'time' : {'begin' : begin, 'end' : end}}
-        return ret
+        avg = durchschnittsWerte(begin, end)
+
+        cursor = connection.cursor()
+        cursor.execute("select id, "
+                       "e5, (e5/" + str(avg['e5']) + ") as 'e5Faktor', "
+                       "e10, (e10/" + str(avg['e10']) + ") as 'e10Faktor', "
+                       "diesel, (diesel/" + str(avg['diesel']) + ") as 'dieselFaktor', "
+                       "timedate from Preise "
+                       "order by timedate DESC, e5Faktor limit 200")
+        print(cursor.fetchall())
 
     return "Anfrage nicht gefunden."
 
@@ -72,7 +75,6 @@ def sqlToJSONTankstelle(result):
     data = []
 
     for res in result:
-        #x = (res[0], res[1], res[2], res[3], res[4])
         x = {
             "id": res[0],
             "name": res[1],
@@ -83,6 +85,19 @@ def sqlToJSONTankstelle(result):
         data.append(x)
 
     return json.dumps(data)
+
+
+#Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten.
+def durchschnittsWerte(begin, end):
+    cursor = connection.cursor()
+    cursor.execute \
+        ("select avg(e10), avg(e5), avg(diesel) from Preise where "
+         "timedate BETWEEN '" + begin + "' "
+                                        "AND '" + end + "' AND e5 <> 0 AND e10 <> 0 AND diesel <> 0")
+    result = cursor.fetchall()
+    ret = {'e10': result[0][0], 'e5': result[0][1], 'diesel': result[0][2],
+           'time': {'begin': begin, 'end': end}}
+    return ret
 
 
 if __name__ == '__main__':
