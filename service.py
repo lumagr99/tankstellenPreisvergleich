@@ -19,6 +19,7 @@ connection = mysql.connector.connect(
 # filter=[all/durchschnitt],
 # begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
 # end=[endZeitpunkt, default currentTimestamp]
+# amount=[Anzahl der zurückzugebenden Werte, default 200, nur bei durchschnitt]
 @app.route('/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
@@ -32,14 +33,34 @@ def preise():
     if filter == "all":
         avg = durchschnittsWerte(begin, end)
 
+        # TODO default count = count* from tankstellen
+        amount = request.args.get('amount', default=200, type=str)
+
+        #TODO faktoren mit 0 aussortieren
         cursor = connection.cursor()
         cursor.execute("select id, "
                        "e5, (e5/" + str(avg['e5']) + ") as 'e5Faktor', "
-                       "e10, (e10/" + str(avg['e10']) + ") as 'e10Faktor', "
-                       "diesel, (diesel/" + str(avg['diesel']) + ") as 'dieselFaktor', "
-                       "timedate from Preise "
-                       "order by timedate DESC, e5Faktor limit 200")
-        print(cursor.fetchall())
+                                                     "e10, (e10/" + str(avg['e10']) + ") as 'e10Faktor', "
+                                                                                      "diesel, (diesel/" + str(
+            avg['diesel']) + ") as 'dieselFaktor', "
+                             "timedate from Preise "
+                             "where timedate BETWEEN'" + begin + "' and '" + end + "' "
+                                                                                   "order by timedate DESC, e5Faktor limit " + str(amount) + ";")
+        temp = cursor.fetchall()
+        ret = []
+        for current in temp:
+            x = {
+                "id": current[0],
+                "e5": current[1],
+                "e5Faktor": current[2],
+                "e10": current[3],
+                "e10Faktor": current[4],
+                "diesel": current[5],
+                "dieselFaktor": current[6],
+                "time": str(current[7])
+            }
+            ret.append(x)
+        return json.dumps(ret)
 
     return "Anfrage nicht gefunden."
 
@@ -87,7 +108,7 @@ def sqlToJSONTankstelle(result):
     return json.dumps(data)
 
 
-#Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten.
+# Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten.
 def durchschnittsWerte(begin, end):
     cursor = connection.cursor()
     cursor.execute \
