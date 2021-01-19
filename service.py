@@ -31,28 +31,38 @@ def preise():
     if filter == "durchschnitt":
         return json.dumps(durchschnittsWerte(begin, end))
     if filter == "all":
-        # URL Parameter sort gibt an, ob der geringste [min], größte [max] oder durchschnittswert [avg]
-        # einer Tankstelle angegeben werden soll
-        sort = request.args.get('sort', default="min", type=str)
+        # URL Parameter basis gibt an, ob der geringste [min], größte [max] oder durchschnittswert [avg]
+        # einer Tankstelle zurückgegeben werden soll.
+        basis = request.args.get('basis', default="min", type=str)
+
+        # URL Parameter order gibt an, ob nach e5Faktor, e10Faktor oder dieselFaktor sortiert werden soll.
+        order = request.args.get('order', default="e5Faktor", type=str)
+
         avg = durchschnittsWerte(begin, end)
         query = ""
 
-        if sort == "min":
+        if basis == "min":
             query = "select id, min(e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', min(e10), avg(e10/" + \
                     str(avg['e10']) + ") as 'e10Faktor', min(diesel), avg(diesel/" +\
                     str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
-                    + begin + "' and '" + end + "' group by id order by timedate DESC, e5Faktor;"
-        elif sort == "max":
+                    + begin + "' and '" + end + "' group by id"
+        elif basis == "max":
             query = "select id, max(e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', max(e10), avg(e10/" + \
                     str(avg['e10']) + ") as 'e10Faktor', max(diesel), avg(diesel/" + \
                     str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
-                    + begin + "' and '" + end + "' group by id order by timedate DESC, e5Faktor;"
-        elif sort == "avg":
+                    + begin + "' and '" + end + "' group by id"
+        elif basis == "avg":
             query = "select id, avg(e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', avg(e10), avg(e10/" + \
                     str(avg['e10']) + ") as 'e10Faktor', avg(diesel), avg(diesel/" + \
                     str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
-                    + begin + "' and '" + end + "' group by id order by timedate DESC, e5Faktor;"
+                    + begin + "' and '" + end + "' group by id"
 
+        if order == "e5Faktor":
+            query = query + " order by e5Faktor;"
+        elif order == "e10Faktor":
+            query = query + " order by e10Faktor;"
+        elif order == "dieselFaktor":
+            query = query + " order by dieselFaktor;"
         # TODO order by e5/e10/diesel mit parameter order=[default/e5/e10/diesel]
         cursor = connection.cursor()
         cursor.execute(query)
