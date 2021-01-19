@@ -6,6 +6,8 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+#TODO fehlerhafte parameter abfangen
+
 connection = mysql.connector.connect(
     host="192.168.178.54",
     user="tankstellenData",
@@ -39,31 +41,17 @@ def preise():
         order = request.args.get('order', default="e5Faktor", type=str)
 
         avg = durchschnittsWerte(begin, end)
-        query = ""
+        query = "select id, [BASIS](e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', [BASIS](e10), avg(e10/" + \
+                    str(avg['e10']) + ") as 'e10Faktor', [BASIS](diesel), avg(diesel/" +\
+                    str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
+                    + begin + "' and '" + end + "' group by id order by [ORDER]"
 
-        if basis == "min":
-            query = "select id, min(e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', min(e10), avg(e10/" + \
-                    str(avg['e10']) + ") as 'e10Faktor', min(diesel), avg(diesel/" +\
-                    str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
-                    + begin + "' and '" + end + "' group by id"
-        elif basis == "max":
-            query = "select id, max(e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', max(e10), avg(e10/" + \
-                    str(avg['e10']) + ") as 'e10Faktor', max(diesel), avg(diesel/" + \
-                    str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
-                    + begin + "' and '" + end + "' group by id"
-        elif basis == "avg":
-            query = "select id, avg(e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', avg(e10), avg(e10/" + \
-                    str(avg['e10']) + ") as 'e10Faktor', avg(diesel), avg(diesel/" + \
-                    str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
-                    + begin + "' and '" + end + "' group by id"
+        #Basis setzen
+        query = query.replace("[BASIS]", basis)
 
-        if order == "e5Faktor":
-            query = query + " order by e5Faktor;"
-        elif order == "e10Faktor":
-            query = query + " order by e10Faktor;"
-        elif order == "dieselFaktor":
-            query = query + " order by dieselFaktor;"
-        # TODO order by e5/e10/diesel mit parameter order=[default/e5/e10/diesel]
+        #Order setzen
+        query = query.replace("[ORDER]", order)
+
         cursor = connection.cursor()
         cursor.execute(query)
         temp = cursor.fetchall()
