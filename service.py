@@ -9,7 +9,7 @@ app = Flask(__name__)
 #TODO fehlerhafte parameter abfangen
 
 connection = mysql.connector.connect(
-    host="192.168.178.54",
+    host="localhost",
     user="tankstellenData",
     password="tankstellenData2021",
     database="tankstellenData"
