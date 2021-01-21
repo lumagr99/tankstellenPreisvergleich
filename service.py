@@ -18,73 +18,28 @@ connection = mysql.connector.connect(
 
 # Ermittlung der durchschnittlichen Kraftstoffpreise
 # mit der URL /preise und den URL-Parametern:
-# filter=[all/durchschnitt/time],
-# begin=[StartZeitpunkt, default 15-01-2020 00:00:00, nur bei all, time],
-# end=[endZeitpunkt, default currentTimestamp, nur bei all, time]
-# amount=[Anzahl der zurückzugebenden Werte, default 200, nur bei durchschnitt]
-# groupById =[True/False, Gruppiert nach der id oder nur nach der Zeit, nur bei time]
+# filter=[all/durchschnitt],
+# begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
+# end=[endZeitpunkt, default currentTimestamp]
+# interval=[days/hours, gibt Stunden oder Tage genaue Preisstatistik, nur bei filter=[all/id]]
+# id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]
 @app.route('/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
 
     begin = request.args.get('begin', default="2021-01-16 00:00:00", type=str)
     end = request.args.get('end', default=str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), type=str)
+    interval = request.args.get("interval", "days", str)
+    id = request.args.get("id", "0", str)
 
     # Durchschnittspreise für alle Kraftstoffarten
     if filter == "durchschnitt":
         return json.dumps(durchschnittsWerte(begin, end))
+    elif filter == "id":
+        return json.dumps(getTankstellenPreis(interval, begin, end, id))
     elif filter == "all":
-        # URL Parameter basis gibt an, ob der geringste [min], größte [max] oder durchschnittswert [avg]
-        # einer Tankstelle zurückgegeben werden soll.
-        basis = request.args.get('basis', default="min", type=str)
 
-        # URL Parameter order gibt an, ob nach e5Faktor, e10Faktor oder dieselFaktor sortiert werden soll.
-        order = request.args.get('order', default="e5Faktor", type=str)
-
-        avg = durchschnittsWerte(begin, end)
-        query = "select id, [BASIS](e5), avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', [BASIS](e10), avg(e10/" + \
-                str(avg['e10']) + ") as 'e10Faktor', [BASIS](diesel), avg(diesel/" + \
-                str(avg['diesel']) + ") as 'dieselFaktor', timedate from Preise where timedate BETWEEN'" \
-                + begin + "' and '" + end + "' group by id order by [ORDER]"
-
-        # Basis setzen
-        query = query.replace("[BASIS]", basis)
-
-        # Order setzen
-        query = query.replace("[ORDER]", order)
-
-        cursor = connection.cursor()
-        cursor.execute(query)
-        temp = cursor.fetchall()
-        ret = []
-        for current in temp:
-            e5 = {
-                "preis": current[1],
-                "faktor": current[2]
-            }
-            e10 = {
-                "preis": current[3],
-                "faktor": current[4]
-            }
-            diesel = {
-                "preis": current[5],
-                "faktor": current[6]
-            }
-            x = {
-                "id": current[0],
-                "e5": e5,
-                "e10": e10,
-                "diesel": diesel,
-                "time": str(current[7])
-            }
-            ret.append(x)
-        return json.dumps(ret)
-
-    elif filter == "time":
-        interval = request.args.get("interval", "days", str)
-        groupbyid = request.args.get("groupbyid", "True", str)
-        print(groupbyid)
-        return json.dumps(getTankstellenPreis(interval, begin, end, groupbyid))
+        return json.dumps(getTankstellenPreis(interval, begin, end))
 
     return "Anfrage nicht gefunden."
 
@@ -132,32 +87,44 @@ def sqlToJSONTankstelle(result):
     return json.dumps(data)
 
 
-# TODO Wochentagen
+# TODO Wochentage
 
 # Ermittelt eine Liste von Preisen, orientiert an Stunden oder Monatstagen, nach IDs aufgeteilt oder nicht.
 # Stunden [hours] oder Tage [days] können angegeben werden.
 # begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
+# id angeben um nach der id zu filtern
 def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d 00:00:00"),
-                        end=datetime.now().strftime("%Y-%m-%d 23:23:59")):
+                        end=datetime.now().strftime("%Y-%m-%d 23:23:59"), id = ""):
     query = ""
 
+    avg = durchschnittsWerte(begin, end)
     if interval == "days":
-        query = "SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel , timedate FROM `Preise` " + \
-                "where timedate between '" + str(begin) + "' and '" + str(end) + "' " + \
+        query = "SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel , timedate, " + \
+                "avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', " + \
+                "avg(e10/" + str(avg['e10']) + ") as 'e10Faktor', " + \
+                "avg(diesel/" + str(avg['diesel']) + ") as 'dieselFaktor' FROM `Preise` " + \
+                "where %id timedate between '" + str(begin) + "' and '" + str(end) + "' " + \
                 "group by id, cast(timedate As Date)"
     elif interval == "hours":
-        query = "SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, HOUR(timedate) as hours  FROM `Preise` " + \
-                "where timedate between '" + begin + "' and '" + end + "' " + \
+        query = "SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, HOUR(timedate) as hours, " + \
+                "avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', " + \
+                "avg(e10/" + str(avg['e10']) + ") as 'e10Faktor', " + \
+                "avg(diesel/" + str(avg['diesel']) + ") as 'dieselFaktor' FROM `Preise` " + \
+                "where %id timedate between '" + begin + "' and '" + end + "' " + \
                 "group by HOUR(timedate)"
 
+    if id == "":
+        query = query.replace("%id", "")
+    else:
+        query = query.replace("%id", " id='" + id + "' and")
 
     print(query)
     cursor = connection.cursor()
 
     cursor.execute(query)
     res = cursor.fetchall()
-    temp = []
 
+    temp = []
     for r in res:
         temp.append(("AVG", r[1], r[2], r[3], r[4]))
     res = temp
@@ -175,10 +142,28 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         x = str(x)
         if x not in ret:
             ret[x] = {}
+
+        e5 = r[1]
+        e10 = r[2]
+        diesel = r[3]
+        if not r[0] == "AVG":
+            e5 = {
+                "price": r[1],
+                "factor": r[5]
+            }
+            e10 = {
+                "price": r[2],
+                "factor": r[6]
+            }
+            diesel = {
+                "price": r[3],
+                "factor": r[7]
+            }
+
         ret[x][r[0]] = {
-            "e5": r[1],
-            "e10": r[2],
-            "diesel": r[3]
+            "e5": e5,
+            "e10": e10,
+            "diesel": diesel
         }
     return ret
 
