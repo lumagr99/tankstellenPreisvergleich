@@ -1,10 +1,6 @@
 import mysql.connector
 
 
-def __init__():
-    print("hello")
-
-
 class DatabaseSingleton:
     __instance__ = None
     __connection__ = mysql.connector.connect(

@@ -18,7 +18,7 @@ mit der URL /preise und den URL-Parametern:
 filter=[all/durchschnitt],
 begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
 end=[endZeitpunkt, default currentTimestamp]
-interval=[days/hours, gibt Stunden oder Tage genaue Preisstatistik, nur bei filter=[all/id]]
+interval=[days/hours/weekdays, gibt Monatstage, Stunden oder Wochentage genaue Preisstatistik, nur bei filter=[all/id]]
 id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
 
 
@@ -37,7 +37,6 @@ def preise():
     elif filter == "id":
         return json.dumps(getTankstellenPreis(interval, begin, end, id))
     elif filter == "all":
-
         return json.dumps(getTankstellenPreis(interval, begin, end))
 
     return "Anfrage nicht gefunden."
@@ -92,9 +91,8 @@ def sqlToJSONTankstelle(result):
     return json.dumps(data)
 
 
-# TODO Wochentage
-
-"""Ermittelt eine Liste von Preisen, orientiert an Stunden oder Monatstagen, nach IDs aufgeteilt oder nicht.
+"""Ermittelt eine Liste von Preisen, orientiert an Stunden [hours], Wochentagen [weekdays] oder Monatstagen [days], 
+nach IDs aufgeteilt oder nicht.
 Stunden [hours] oder Tage [days] können angegeben werden.
 begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
 id angeben um nach der id zu filtern"""
@@ -105,7 +103,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
     query = ""
 
     avg = durchschnittsWerte(begin, end)
-    if interval == "days":
+    if interval == "days" or interval == "weekdays":
         query = "SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel , timedate, " + \
                 "avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', " + \
                 "avg(e10/" + str(avg['e10']) + ") as 'e10Faktor', " + \
@@ -146,6 +144,8 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         x = r[4]
         if interval == "days":
             x = x.replace(second=0, minute=0, hour=0)
+        elif interval == "weekdays":
+            x = ("monday", "tuesday", "thursday", "wednesday", "friday", "saturday", "sunday")[x.weekday()]
         x = str(x)
         if x not in ret:
             ret[x] = {}
