@@ -6,23 +6,46 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+
 # TODO fehlerhafte parameter abfangen
 
-connection = mysql.connector.connect(
-    host="192.168.178.54",
-    user="tankstellenData",
-    password="tankstellenData2021",
-    database="tankstellenData"
-)
+
+class DatabaseSingleton:
+    __instance__ = None
+    __connection__ = mysql.connector.connect(
+        host="192.168.178.54",
+        user="tankstellenData",
+        password="tankstellenData2021",
+        database="tankstellenData"
+    )
+
+    def __init__(self):
+        if DatabaseSingleton.__instance__ is None:
+            DatabaseSingleton.__instance__ = self
+        else:
+            raise Exception("Du kannst keine weitere Instanz erzeugen!")
+
+    @staticmethod
+    def getInstance():
+        if not DatabaseSingleton.__instance__:
+            DatabaseSingleton()
+        return DatabaseSingleton.__instance__
+
+    def getCursor(self):
+        return self.__connection__.cursor()
 
 
-# Ermittlung der durchschnittlichen Kraftstoffpreise
-# mit der URL /preise und den URL-Parametern:
-# filter=[all/durchschnitt],
-# begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
-# end=[endZeitpunkt, default currentTimestamp]
-# interval=[days/hours, gibt Stunden oder Tage genaue Preisstatistik, nur bei filter=[all/id]]
-# id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]
+d = DatabaseSingleton()
+
+""" Ermittlung der durchschnittlichen Kraftstoffpreise
+mit der URL /preise und den URL-Parametern:
+filter=[all/durchschnitt],
+begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
+end=[endZeitpunkt, default currentTimestamp]
+interval=[days/hours, gibt Stunden oder Tage genaue Preisstatistik, nur bei filter=[all/id]]
+id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
+
+
 @app.route('/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
@@ -44,16 +67,19 @@ def preise():
     return "Anfrage nicht gefunden."
 
 
-# Anzeige von Tankstellen mit der URL /tankstellen und den URL-Parametern:
-# filter = [all/id, default all]
-# id = [tankstellenID, nur bei filter=id
+"""Anzeige von Tankstellen mit der URL /tankstellen und den URL-Parametern:
+filter = [all/id, default all]
+id = [tankstellenID, nur bei filter=id"""
+
+
 @app.route('/tankstellen')
 def tankstellen():
     filter = request.args.get('filter', default="all", type=str)
-    cursor = connection.cursor()
+    # cursor = connection.cursor()
 
     # Zeigt alle Tankstellen an
     if filter == "all":
+        cursor = d.getCursor()
         cursor.execute("select id, name, place, street, housenumber from Tankstellen;")
         return sqlToJSONTankstelle(cursor.fetchall())
 
@@ -64,13 +90,16 @@ def tankstellen():
         if t_id == "0":
             return "No ID!"
         else:
+            cursor = d.getCursor()
             cursor.execute("select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
             return sqlToJSONTankstelle(cursor.fetchall())
 
     return "Anfrage nicht gefunden."
 
 
-# ONLY id, name, place, stress, housenumber
+"""ONLY id, name, place, stress, housenumber"""
+
+
 def sqlToJSONTankstelle(result):
     data = []
 
@@ -89,12 +118,14 @@ def sqlToJSONTankstelle(result):
 
 # TODO Wochentage
 
-# Ermittelt eine Liste von Preisen, orientiert an Stunden oder Monatstagen, nach IDs aufgeteilt oder nicht.
-# Stunden [hours] oder Tage [days] können angegeben werden.
-# begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
-# id angeben um nach der id zu filtern
+"""Ermittelt eine Liste von Preisen, orientiert an Stunden oder Monatstagen, nach IDs aufgeteilt oder nicht.
+Stunden [hours] oder Tage [days] können angegeben werden.
+begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
+id angeben um nach der id zu filtern"""
+
+
 def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d 00:00:00"),
-                        end=datetime.now().strftime("%Y-%m-%d 23:23:59"), id = ""):
+                        end=datetime.now().strftime("%Y-%m-%d 23:23:59"), id=""):
     query = ""
 
     avg = durchschnittsWerte(begin, end)
@@ -119,7 +150,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         query = query.replace("%id", " id='" + id + "' and")
 
     print(query)
-    cursor = connection.cursor()
+    cursor = d.getCursor()
 
     cursor.execute(query)
     res = cursor.fetchall()
@@ -168,9 +199,11 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
     return ret
 
 
-# Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten.
+"""Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten."""
+
+
 def durchschnittsWerte(begin, end):
-    cursor = connection.cursor()
+    cursor = d.getCursor()
     cursor.execute \
         ("select avg(e10), avg(e5), avg(diesel) from Preise where "
          "timedate BETWEEN '" + begin + "' "
