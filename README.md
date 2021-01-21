@@ -4,7 +4,7 @@ Das Projekt entstand im Rahmen einer Ausarbeitung an der Fachhochschule Südwest
 
 ## Backend API
 URL: ./preise
-    Optional URL-Parameters:
+    Optionale URL-Parameter:
         begin = [yyyy-mm-dd hh:mm:ss]
             Startdartum der Datenauswahl
         end = [yyyy-mm-dd hh:mm:ss]
@@ -21,5 +21,3 @@ URL: ./tankstellen
     URL-Parameter:
         id = [TankstellenID]
             Zeigt generelle Informationen wie Adresse von einer Tankstelle an.
-    
-    
