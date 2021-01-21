@@ -9,7 +9,7 @@ app = Flask(__name__)
 # TODO fehlerhafte parameter abfangen
 
 connection = mysql.connector.connect(
-    host="localhost",
+    host="192.168.178.54",
     user="tankstellenData",
     password="tankstellenData2021",
     database="tankstellenData"
@@ -132,15 +132,13 @@ def sqlToJSONTankstelle(result):
     return json.dumps(data)
 
 
-#TODO Wochentagen
-
-#TODO vereinfachen, Nach Datum bzw. Uhrzeit und darunter: avg, dann die Tankstellen und darunter jeweils die Preise
+# TODO Wochentagen
 
 # Ermittelt eine Liste von Preisen, orientiert an Stunden oder Monatstagen, nach IDs aufgeteilt oder nicht.
 # Stunden [hours] oder Tage [days] können angegeben werden.
 # begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
 def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d 00:00:00"),
-                        end=datetime.now().strftime("%Y-%m-%d 23:23:59"), groupyById="True"):
+                        end=datetime.now().strftime("%Y-%m-%d 23:23:59")):
     query = ""
 
     if interval == "days":
@@ -152,37 +150,36 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
                 "where timedate between '" + begin + "' and '" + end + "' " + \
                 "group by HOUR(timedate)"
 
-    if groupyById == "True":
-        query = query + ", id;"
 
     print(query)
     cursor = connection.cursor()
+
+    cursor.execute(query)
+    res = cursor.fetchall()
+    temp = []
+
+    for r in res:
+        temp.append(("AVG", r[1], r[2], r[3], r[4]))
+    res = temp
+
+    query = query + ", id;"
     cursor.execute(query)
 
-    res = cursor.fetchall()
+    res = res + cursor.fetchall()
+
     ret = {}
     for r in res:
-        if groupyById == "True":
-            if r[0] not in res:
-                ret[r[0]] = []
-            ret[r[0]].append({
-                "e5": r[1],
-                "e10": r[2],
-                "diesel": r[3],
-                "time": str(r[4])
-            })
-        else:
-            x = r[4]
-            if interval == "days":
-                x = r[4].replace(second=0, minute=0, hour=0)
-
-            if str(x) not in res:
-                ret[str(x)] = []
-                ret[str(x)].append({
-                    "e5": r[1],
-                    "e10": r[2],
-                    "diesel": r[3]
-                })
+        x = r[4]
+        if interval == "days":
+            x = x.replace(second=0, minute=0, hour=0)
+        x = str(x)
+        if x not in ret:
+            ret[x] = {}
+        ret[x][r[0]] = {
+            "e5": r[1],
+            "e10": r[2],
+            "diesel": r[3]
+        }
     return ret
 
 
