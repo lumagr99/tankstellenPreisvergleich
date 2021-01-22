@@ -4,7 +4,7 @@ import mysql.connector
 class DatabaseSingleton:
     __instance__ = None
     __connection__ = mysql.connector.connect(
-        host="192.168.178.54",
+        host="localhost",
         user="tankstellenData",
         password="tankstellenData2021",
         database="tankstellenData"
