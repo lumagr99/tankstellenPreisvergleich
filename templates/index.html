@@ -13,7 +13,7 @@
                 <h2>Deine Tankstellen:</h2>
                 <ul>
                     {%for tanke in tankstellen %}
-                    <li><a href="{{ url_for('tankstelle', tankstelle_id=tanke) }}"> {{ tanke }}</a></li>
+                    <li><a href="{{ url_for('tankstelle', tankstelle_id=tanke[1]) }}"> {{ tanke[0] }}</a></li>
                     {% endfor %}
                 </ul>
                <button>Tankstelle hinzufügen</button>

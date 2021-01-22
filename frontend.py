@@ -14,14 +14,21 @@ def index():
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
     print(data["00060453-0001-4444-8888-acdc00000001"]["name"])
-    test_list = ["klaus", "peter", "franz"]
+
+    test_list = []
+    for tanke in data:
+        test_list.append([data[tanke]["name"] + "-" + data[tanke]["place"], tanke])
+
     return render_template('index.html', tankstellen=test_list)
 
 
 @app.route("/tankstelle/<tankstelle_id>")
 def tankstelle(tankstelle_id):
-    #tankstelle = Tankstelle.query.get(id)
-    return render_template("tankstelle.html", tankstelle=tankstelle_id)
+    url = "http://127.0.0.1:5000/tankstellen?filter=id&id=" + tankstelle_id
+    response = urllib.request.urlopen(url)
+    data = json.loads(response.read())
+    print(data)
+    return render_template("tankstelle.html", tankstelle=data[0]["name"])
 
 
 if __name__ == "__main__":
