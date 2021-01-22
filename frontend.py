@@ -28,7 +28,7 @@ def tankstelle(tankstelle_id):
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
     print(data)
-    return render_template("tankstelle.html", tankstelle=data[0]["name"])
+    return render_template("tankstelle.html", tankstelle=data[tankstelle_id]["name"])
 
 
 if __name__ == "__main__":

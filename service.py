@@ -78,7 +78,18 @@ def tankstellen():
         else:
             cursor = d.getCursor()
             cursor.execute("select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
-            return sqlToJSONTankstelle(cursor.fetchall())
+            data = cursor.fetchall()
+            ret = {}
+            for c in data:
+                print(c[1])
+                if c[0] not in ret:
+                    ret[c[0]] = {
+                        "name": c[1],
+                        "place": c[2],
+                        "street": c[3],
+                        "number": c[4]
+                    }
+            return ret
 
     return "Anfrage nicht gefunden."
 
