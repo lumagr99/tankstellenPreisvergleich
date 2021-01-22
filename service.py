@@ -56,7 +56,18 @@ def tankstellen():
     if filter == "all":
         cursor = d.getCursor()
         cursor.execute("select id, name, place, street, housenumber from Tankstellen;")
-        return sqlToJSONTankstelle(cursor.fetchall())
+        data = cursor.fetchall()
+        ret = {}
+        for c in data:
+            print(c[1])
+            if c[0] not in ret:
+                ret[c[0]] = {
+                    "name": c[1],
+                    "place": c[2],
+                    "street": c[3],
+                    "number": c[4]
+                }
+        return ret
 
     # Zeigt eine Tankstelle an
     # Benötigter Parameter: id = [tankstellenID, default 0]

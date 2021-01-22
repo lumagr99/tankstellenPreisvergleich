@@ -10,10 +10,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    url = "localhost:5000/tankstellen"
+    url = "http://127.0.0.1:5000/tankstellen"
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
-    test_list = ["klaus", "peter"]
+    print(data["00060453-0001-4444-8888-acdc00000001"]["name"])
+    test_list = ["klaus", "peter", "franz"]
     return render_template('index.html', tankstellen=test_list)
 
 
