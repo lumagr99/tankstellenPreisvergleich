@@ -2,6 +2,9 @@ import json
 import urllib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from flask import Flask, render_template, Response
 import io
 import numpy as np
@@ -41,8 +44,8 @@ def plot_png(tankstelle_id):
     print(len(preis_data))
     preise_e5 = []
     for zeit in preis_data:
-        print(preis_data[zeit][tankstelle_id]["e5"]["price"])
-        preise_e5.append(preis_data[zeit][tankstelle_id]["e5"]["price"])
+        print(preis_data[zeit][tankstelle_id]["diesel"]["price"])
+        preise_e5.append(preis_data[zeit][tankstelle_id]["diesel"]["price"])
     print(preise_e5)
 
     fig = create_figure(preise_e5)
@@ -51,11 +54,16 @@ def plot_png(tankstelle_id):
     return Response(output.getvalue(), mimetype='image/png')
 
 def create_figure(preise):
-    fig = Figure()
-    axis = fig.add_subplot(1, 1, 1)
-    xs = np.array(range(0, 24))
-    ys = np.array(preise)
-    axis.plot(xs, ys)
+    p = np.array(range(0, 24))
+    t = np.array(preise)
+
+    fig, ax = plt.subplots()
+    ax.plot(p, t)
+
+    ax.set(xlabel='zeit (h)', ylabel='preis (€)',
+           title='Preisverlauf')
+    ax.grid()
+
     return fig
 
 
