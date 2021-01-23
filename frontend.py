@@ -29,7 +29,7 @@ def index():
 
 
 def get_preis_data(tankstellen_id, beginn="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
-    url = "http://127.0.0.1:5000/preise?filter=id&begin2021-01-17%2000:00:00end2021-01-17%2023:59:59&interval=hours&id=00062381-330f-4444-8888-acdc00000001"
+    url = "http://127.0.0.1:5000/preise?filter=id&begin2021-01-17%2000:00:00end2021-01-17%2023:59:59&interval=hours&id=" + tankstellen_id
     response = urllib.request.urlopen(url)
     preis_data = json.loads(response.read())
     print(preis_data)
@@ -66,11 +66,12 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
     p_diesel = np.array(preis_diesel)
 
     fig, ax = plt.subplots()
-    ax.plot(t, p_e5, label="E5")
-    ax.plot(t, p_e10, label="test")
-    ax.plot(t, p_diesel)
+    e_5 = ax.plot(t, p_e5, label="E5")
+    ax.plot(t, p_e10, label="E10")
+    ax.plot(t, p_diesel, label="Diesel")
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')
+    ax.legend(loc='upper left')
     ax.grid()
 
     return fig
