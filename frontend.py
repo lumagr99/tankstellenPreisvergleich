@@ -43,23 +43,32 @@ def plot_png(tankstelle_id):
     preis_data = get_preis_data(tankstelle_id)
     print(len(preis_data))
     preise_e5 = []
+    preise_e10 = []
+    preise_diesel = []
     for zeit in preis_data:
-        print(preis_data[zeit][tankstelle_id]["diesel"]["price"])
-        preise_e5.append(preis_data[zeit][tankstelle_id]["diesel"]["price"])
+        print(preis_data[zeit][tankstelle_id]["e5"]["price"])
+        preise_e5.append(preis_data[zeit][tankstelle_id]["e5"]["price"])
+        preise_e10.append(preis_data[zeit][tankstelle_id]["e10"]["price"])
+        preise_diesel.append(preis_data[zeit][tankstelle_id]["diesel"]["price"])
     print(preise_e5)
 
-    fig = create_figure(preise_e5)
+    fig = create_figure(preise_e5, preise_e10, preise_diesel)
     output = io.BytesIO()
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
-def create_figure(preise):
-    p = np.array(range(0, 24))
-    t = np.array(preise)
+
+def create_figure(preis_e5, preis_e10, preis_diesel):
+    t = np.array(range(0, 24))
+    p_e5 = np.array(preis_e5)
+    p_e10 = np.array(preis_e10)
+
+    p_diesel = np.array(preis_diesel)
 
     fig, ax = plt.subplots()
-    ax.plot(p, t)
-
+    ax.plot(t, p_e5, label="E5")
+    ax.plot(t, p_e10, label="test")
+    ax.plot(t, p_diesel)
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')
     ax.grid()
