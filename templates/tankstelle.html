@@ -7,6 +7,7 @@
 <body>
     <h1>{{ tankstelle }}</h1>
     <img src="{{ url_for('plot_png', tankstelle_id=tankstelle_id, datum=datum) }}">
+    <h2>{{ datum }}</h2>
     <form action="" method="post" name="datum_select">
         <input type="date" name="datum" required="required"/>
         <button>Tag anzeigen</button>
