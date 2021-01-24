@@ -16,7 +16,7 @@ d = DatabaseSingleton()
 """ Ermittlung der durchschnittlichen Kraftstoffpreise
 mit der URL /preise und den URL-Parametern:
 filter=[all/durchschnitt],
-begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
+begin=[StartZeitpunkt, default 2021-01-15 00:00:00],
 end=[endZeitpunkt, default currentTimestamp]
 interval=[days/hours/weekdays, gibt Monatstage, Stunden oder Wochentage genaue Preisstatistik, nur bei filter=[all/id]]
 id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
