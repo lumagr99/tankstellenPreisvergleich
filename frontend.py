@@ -1,5 +1,7 @@
 import json
 import urllib
+
+import mpld3 as mpld3
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
 matplotlib.use('Agg')
@@ -10,7 +12,6 @@ import numpy as np
 
 
 app = Flask(__name__)
-
 
 
 """Startseite mit der liste aller Tankstellen"""
@@ -36,9 +37,10 @@ def get_preis_data(tankstellen_id, beginn="2021-01-17 00:00:00", end="2021-01-17
     return preis_data
 
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
-@app.route("/plot_png/<tankstelle_id>")
-def plot_png(tankstelle_id):
+@app.route("/plot_png/<tankstelle_id>/<datum>")
+def plot_png(tankstelle_id, datum):
     print(tankstelle_id)
+    print(datum)
     preis_data = get_preis_data(tankstelle_id)
     print(len(preis_data))
     preise_e5 = []
@@ -71,19 +73,26 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
     ax.legend(loc='upper left')
     ax.grid()
 
+
+
     return fig
 
 
 
 """seite mit Der Preisentwicklung einer Tankstelle"""
-@app.route("/tankstelle/<tankstelle_id>")
+@app.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
     url = "http://127.0.0.1:5000/tankstellen?filter=id&id=" + tankstelle_id
     response = urllib.request.urlopen(url)
     tankstellen_data = json.loads(response.read())
-    #print(preis_data["0"][tankstelle_id]["e5"]["price"])
-    return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"], tankstelle_id=tankstelle_id)
-
+    if request.method == "GET":
+        #print(preis_data["0"][tankstelle_id]["e5"]["price"])
+        datum = "2021-01-17"
+        return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"], tankstelle_id=tankstelle_id, datum=datum)
+    else:
+        datum = request.form.get("datum")
+        return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
+                               tankstelle_id=tankstelle_id, datum=datum)
 
 
 
