@@ -11,14 +11,16 @@ import numpy as np
 
 app = Flask(__name__)
 
-url_prefix = "http://192.168.178.54"
+backend_url_prefix = "http://localhost"
+
+#TODO Sorte von Diagram ausschließen wenn Preis = 0 z.B. Shell in Wetter aef9d601-8de5-4775-8918-a5ae6d0853cd
 
 """Startseite mit der liste aller Tankstellen"""
 
 
 @app.route("/")
 def index():
-    url = url_prefix + ":5000/tankstellen"
+    url = backend_url_prefix + ":5000/tankstellen"
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
     print(data["00060453-0001-4444-8888-acdc00000001"]["name"])
@@ -34,7 +36,7 @@ def index():
 
 
 def get_preis_data(tankstellen_id, beginn="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
-    url = url_prefix + ":5000/preise?filter=id&begin2021-01-17%2000:00:00end2021-01-17%2023:59:59&interval=hours&id=" + tankstellen_id
+    url = backend_url_prefix + ":5000/preise?filter=id&begin2021-01-17%2000:00:00end2021-01-17%2023:59:59&interval=hours&id=" + tankstellen_id
     response = urllib.request.urlopen(url)
     preis_data = json.loads(response.read())
     print(preis_data)
@@ -90,7 +92,7 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
 
 @app.route("/tankstelle/<tankstelle_id>")
 def tankstelle(tankstelle_id):
-    url = url_prefix + ":5000/tankstellen?filter=id&id=" + tankstelle_id
+    url = backend_url_prefix + ":5000/tankstellen?filter=id&id=" + tankstelle_id
     response = urllib.request.urlopen(url)
     tankstellen_data = json.loads(response.read())
     # print(preis_data["0"][tankstelle_id]["e5"]["price"])
