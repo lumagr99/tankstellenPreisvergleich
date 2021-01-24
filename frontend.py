@@ -74,6 +74,7 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')
     ax.legend(loc='upper left')
+    plt.xticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])
     ax.grid()
 
 
