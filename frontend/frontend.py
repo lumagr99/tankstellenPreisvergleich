@@ -13,8 +13,9 @@ import numpy as np
 
 app = Flask(__name__)
 
+backend_url_prefix = "http://localhost"
 
-#TODO Sorte von Diagram ausschließen wenn Preis = 0 z.B. Shell in Wetter aef9d601-8de5-4775-8918-a5ae6d0853cd
+
 
 """Startseite mit der liste aller Tankstellen"""
 
@@ -49,10 +50,6 @@ def get_preis_data(tankstellen_id, beginn="2021-01-17 00:00:00", end="2021-01-17
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
 @app.route("/plot_png/<tankstelle_id>/<datum>")
 def plot_png(tankstelle_id, datum):
-
-
-@app.route("/plot_png/<tankstelle_id>")
-def plot_png(tankstelle_id):
     print(tankstelle_id)
     print(datum)
     beginn = datum + "%2000:00:00"
@@ -85,9 +82,27 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
     p_diesel = np.array(preis_diesel)
 
     fig, ax = plt.subplots()
-    ax.plot(t, p_e5, label="E5")
-    ax.plot(t, p_e10, label="E10")
-    ax.plot(t, p_diesel, label="Diesel")
+    zero_count = 0
+    for preis in p_e5:
+        if preis == 0:
+            zero_count += 1
+    if zero_count != len(p_e5):
+        ax.plot(t, p_e5, label="E5")
+
+
+    zero_count = 0
+    for preis in p_e10:
+        if preis == 0:
+            zero_count += 1
+    if zero_count != len(p_e10):
+        ax.plot(t, p_e10, label="E10")
+
+    zero_count = 0
+    for preis in p_diesel:
+        if preis == 0:
+            zero_count += 1
+    if zero_count != len(p_diesel):
+        ax.plot(t, p_diesel, label="Diesel")
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')
     ax.legend(loc='upper left')
