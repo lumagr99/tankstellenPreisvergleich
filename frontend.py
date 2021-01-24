@@ -2,21 +2,23 @@ import json
 import urllib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from flask import Flask, render_template, Response, request
 import io
 import numpy as np
 
-
 app = Flask(__name__)
 
-
+url_prefix = "http://192.168.178.54"
 
 """Startseite mit der liste aller Tankstellen"""
+
+
 @app.route("/")
 def index():
-    url = "http://127.0.0.1:5000/tankstellen"
+    url = url_prefix + ":5000/tankstellen"
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
     print(data["00060453-0001-4444-8888-acdc00000001"]["name"])
@@ -27,15 +29,21 @@ def index():
 
     return render_template('index.html', tankstellen=test_list)
 
+
 """Funktion zur Rückgabe der Preis daten einer Tankstelle"""
+
+
 def get_preis_data(tankstellen_id, beginn="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
-    url = "http://127.0.0.1:5000/preise?filter=id&begin2021-01-17%2000:00:00end2021-01-17%2023:59:59&interval=hours&id=" + tankstellen_id
+    url = url_prefix + ":5000/preise?filter=id&begin2021-01-17%2000:00:00end2021-01-17%2023:59:59&interval=hours&id=" + tankstellen_id
     response = urllib.request.urlopen(url)
     preis_data = json.loads(response.read())
     print(preis_data)
     return preis_data
 
+
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
+
+
 @app.route("/plot_png/<tankstelle_id>")
 def plot_png(tankstelle_id):
     print(tankstelle_id)
@@ -54,7 +62,10 @@ def plot_png(tankstelle_id):
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
+
 """Funktion zu erstellung eines Plots"""
+
+
 def create_figure(preis_e5, preis_e10, preis_diesel):
     t = np.array(range(0, 24))
     p_e5 = np.array(preis_e5)
@@ -74,17 +85,17 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
     return fig
 
 
-
 """seite mit Der Preisentwicklung einer Tankstelle"""
+
+
 @app.route("/tankstelle/<tankstelle_id>")
 def tankstelle(tankstelle_id):
-    url = "http://127.0.0.1:5000/tankstellen?filter=id&id=" + tankstelle_id
+    url = url_prefix + ":5000/tankstellen?filter=id&id=" + tankstelle_id
     response = urllib.request.urlopen(url)
     tankstellen_data = json.loads(response.read())
-    #print(preis_data["0"][tankstelle_id]["e5"]["price"])
-    return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"], tankstelle_id=tankstelle_id)
-
-
+    # print(preis_data["0"][tankstelle_id]["e5"]["price"])
+    return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
+                           tankstelle_id=tankstelle_id)
 
 
 if __name__ == "__main__":
