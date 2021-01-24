@@ -1,8 +1,10 @@
 from backend.service import service
 
-service = service("192.168.178.54")
+"""URL der Datenbank"""
+databaseURL = "192.168.178.54"
 
-running = True
+"""URL des Backendservice, nur ändern wenn er auf einem anderen System gestartet wurde."""
+serviceURL = "localhost"
 
-while running:
-    pass
+"""Startet das Backend"""
+service = service(databaseURL)
