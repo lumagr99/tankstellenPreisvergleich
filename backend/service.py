@@ -4,19 +4,22 @@ from datetime import datetime
 from flask import Flask
 from flask import request
 
-from database.DatabaseSingleton import DatabaseSingleton
+from backend.database.DatabaseSingleton import DatabaseSingleton
 
 app = Flask(__name__)
 
-
 # TODO fehlerhafte parameter abfangen
 
-d = DatabaseSingleton()
+d = ""
+
+d = DatabaseSingleton("192.168.178.54")
+print("service")
+#app.run()
 
 """ Ermittlung der durchschnittlichen Kraftstoffpreise
 mit der URL /preise und den URL-Parametern:
 filter=[all/durchschnitt],
-begin=[StartZeitpunkt, default 15-01-2020 00:00:00],
+begin=[StartZeitpunkt, default 2021-01-15 00:00:00],
 end=[endZeitpunkt, default currentTimestamp]
 interval=[days/hours/weekdays, gibt Monatstage, Stunden oder Wochentage genaue Preisstatistik, nur bei filter=[all/id]]
 id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
@@ -77,7 +80,8 @@ def tankstellen():
             return "No ID!"
         else:
             cursor = d.getCursor()
-            cursor.execute("select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
+            cursor.execute(
+                "select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
             data = cursor.fetchall()
             ret = {}
             for c in data:

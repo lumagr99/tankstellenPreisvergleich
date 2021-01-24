@@ -14,10 +14,14 @@ import numpy as np
 app = Flask(__name__)
 
 
+#TODO Sorte von Diagram ausschließen wenn Preis = 0 z.B. Shell in Wetter aef9d601-8de5-4775-8918-a5ae6d0853cd
+
 """Startseite mit der liste aller Tankstellen"""
+
+
 @app.route("/")
 def index():
-    url = "http://127.0.0.1:5000/tankstellen"
+    url = backend_url_prefix + ":5000/tankstellen"
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
     print(data["00060453-0001-4444-8888-acdc00000001"]["name"])
@@ -28,17 +32,27 @@ def index():
 
     return render_template('index.html', tankstellen=test_list)
 
+
 """Funktion zur Rückgabe der Preis daten einer Tankstelle"""
 def get_preis_data(tankstellen_id, begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
     url = "http://127.0.0.1:5000/preise?filter=id&begin"+ begin + end + "&interval=hours&id=" + tankstellen_id
+
+
+def get_preis_data(tankstellen_id, beginn="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
+    url = backend_url_prefix + ":5000/preise?filter=id&begin2021-01-17%2000:00:00end2021-01-17%2023:59:59&interval=hours&id=" + tankstellen_id
     response = urllib.request.urlopen(url)
     preis_data = json.loads(response.read())
     print(preis_data)
     return preis_data
 
+
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
 @app.route("/plot_png/<tankstelle_id>/<datum>")
 def plot_png(tankstelle_id, datum):
+
+
+@app.route("/plot_png/<tankstelle_id>")
+def plot_png(tankstelle_id):
     print(tankstelle_id)
     print(datum)
     beginn = datum + "%2000:00:00"
@@ -59,7 +73,10 @@ def plot_png(tankstelle_id, datum):
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
+
 """Funktion zu erstellung eines Plots"""
+
+
 def create_figure(preis_e5, preis_e10, preis_diesel):
     t = np.array(range(0, 24))
     p_e5 = np.array(preis_e5)
@@ -82,11 +99,13 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
     return fig
 
 
-
 """seite mit Der Preisentwicklung einer Tankstelle"""
+
+
+
 @app.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
-    url = "http://127.0.0.1:5000/tankstellen?filter=id&id=" + tankstelle_id
+    url = backend_url_prefix + ":5000/tankstellen?filter=id&id=" + tankstelle_id
     response = urllib.request.urlopen(url)
     tankstellen_data = json.loads(response.read())
     if request.method == "GET":
