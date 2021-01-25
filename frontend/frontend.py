@@ -69,7 +69,7 @@ def plot_png(tankstelle_id, datum):
 
 
 def create_figure(preis_e5, preis_e10, preis_diesel):
-    t = np.array(range(0, 24))
+    t = np.array(range(0, len(preis_e5)))
     p_e5 = np.array(preis_e5) #Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)
@@ -101,7 +101,7 @@ def create_figure(preis_e5, preis_e10, preis_diesel):
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')                        #Festlegen der Achsen beschriftung, Titel und position der Legende
     ax.legend(loc='upper left')
-    plt.xticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23])
+    plt.xticks(range(0, len(p_e5)))
     ax.grid()
     return fig
 

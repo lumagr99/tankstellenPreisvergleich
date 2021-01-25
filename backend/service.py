@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 d = ""
 
-d = DatabaseSingleton("192.168.178.54")
+d = DatabaseSingleton("localhost")
 print("service")
 #app.run()
 
