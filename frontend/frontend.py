@@ -42,13 +42,28 @@ def get_preis_data(tankstellen_id, begin="2021-01-17 00:00:00", end="2021-01-17 
 
 
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
-@app.route("/plot_png/<tankstelle_id>/<datum>/<e5_avg>/<e10_avg>/<diesel_avg>")
-def plot_png(tankstelle_id, datum, e5_avg, e10_avg, diesel_avg):
+@app.route("/plot_png/<tankstelle_id>/<datum>/<display_e5_avg>/<display_e10_avg>/<display_diesel_avg>")
+def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_diesel_avg):
     beginn = datum + "%2000:00:00"
     end = datum + "%2023:59:59"         #beginn und ende des PReisverlaufs festlegen
 
     preis_data = get_preis_data(tankstelle_id, beginn, end) #Preise abfragen
     print(len(preis_data))
+
+    if display_e5_avg == "True":
+        display_e5_avg = True
+    else:
+        display_e5_avg = False
+    if display_e10_avg == "True":
+            display_e10_avg = True
+    else:
+            display_e10_avg = False
+    if display_diesel_avg == "True":
+        display_diesel_avg = True
+    else:
+        display_diesel_avg = False
+
+
     preise_e5 = []
     preise_e10 = []             #Preise nach Sorten aufteilen
     preise_diesel = []
@@ -59,14 +74,14 @@ def plot_png(tankstelle_id, datum, e5_avg, e10_avg, diesel_avg):
         preise_e5.append(preis_data[zeit][tankstelle_id]["e5"]["price"])
         preise_e10.append(preis_data[zeit][tankstelle_id]["e10"]["price"])
         preise_diesel.append(preis_data[zeit][tankstelle_id]["diesel"]["price"])
-        if e5_avg == True:
+        if display_e5_avg:
             preise_e5_avg.append(preis_data[zeit]["AVG"]["e5"])
-        if e10_avg == True:
+        if display_e10_avg == True:
             preise_e10_avg.append(preis_data[zeit]["AVG"]["e10"])
-        if diesel_avg == True:
+        if display_diesel_avg == True:
             preise_diesel_avg.append(preis_data[zeit]["AVG"]["diesel"])
 
-    fig = create_figure(preise_e5, preise_e10, preise_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, e5_avg, e10_avg, diesel_avg)
+    fig = create_figure(preise_e5, preise_e10, preise_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, display_e5_avg, display_e10_avg, display_diesel_avg)
     output = io.BytesIO()                                       #Graph erstellen und auf Canvas bringen
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png') #URL für Graph(png) zuruckgeben
@@ -75,12 +90,11 @@ def plot_png(tankstelle_id, datum, e5_avg, e10_avg, diesel_avg):
 """Funktion zu erstellung eines Plots"""
 
 
-def create_figure(preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, e5_avg, e10_avg, diesel_avg):
+def create_figure(preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, display_e5_avg, display_e10_avg, display_diesel_avg):
     t = np.array(range(0, len(preis_e5)))
     p_e5 = np.array(preis_e5) #Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)
-
 
 
     fig, ax = plt.subplots()
@@ -107,16 +121,15 @@ def create_figure(preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_a
     if zero_count != len(p_diesel):
         ax.plot(t, p_diesel, label="Diesel")
 
-    if e5_avg == True:
-        print(e5_avg)
+    if display_e5_avg:
         p_e5_avg = np.array(preise_e5_avg)
         ax.plot(t, p_e5_avg, label="E5 Duchschnitt")
 
-    if e10_avg == True:
+    if display_e10_avg:
         p_e10_avg = np.array(preise_e10_avg)
         ax.plot(t, p_e10_avg, label="E10 Duchschnitt")
 
-    if diesel_avg == True:
+    if display_diesel_avg:
         p_diesel_avg = np.array(preise_diesel_avg)
         ax.plot(t, p_diesel_avg, label="Diesel Duchschnitt")
 
@@ -135,24 +148,23 @@ def tankstelle(tankstelle_id):
     response = urllib.request.urlopen(url)              #Abfragen der Tankstellendaten aus dem Backend
     tankstellen_data = json.loads(response.read())
 
-    e5_avg = False
-    e10_avg = False
-    diesel_avg = False
+    display_e5_avg = False
+    display_e10_avg = False
+    display_diesel_avg = False
 
     if request.method == "GET":
         datum = "2021-01-17"                #Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
-        return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"], tankstelle_id=tankstelle_id, datum=datum, e5_avg=e5_avg, e10_avg=e10_avg, diesel_avg=diesel_avg)
+        return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"], tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg, e10_avg=display_e10_avg, diesel_avg=display_diesel_avg)
     else:
         if request.form.get("e5_avg") == "on":
-            e5_avg = True
+            display_e5_avg = True
         if request.form.get("e10_avg"):
-            e10_avg = True
+            display_e10_avg = True
         if request.form.get("diesel_avg"):
-            diesel_avg = True
+            display_diesel_avg = True
         datum = request.form.get("datum")
-        print(e5_avg)
         return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
-                               tankstelle_id=tankstelle_id, datum=datum, e5_avg=e5_avg, e10_avg=e10_avg, diesel_avg=diesel_avg)
+                               tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg, e10_avg=display_e10_avg, diesel_avg=display_diesel_avg)
 
 
 
