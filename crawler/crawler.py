@@ -11,9 +11,9 @@ if not data.get('ok'):
 
 connection = mysql.connector.connect(
     host="192.168.178.55",
-    user="tankstellenData",
-    password="tankstellenData2021",
-    database="tankstellenData"
+    user="tankstellenCrawler",
+    password="kzuANqgSA3CsTOPr",
+    database="kzuANqgSA3CsTOPr"
 )
 
 
@@ -39,7 +39,7 @@ def createStation(station, cursor):
 
 
 def insertData(station, cursor):
-    cursor.execute("insert into Preise (id, diesel, e5, e10)" +
+    print("insert into Preise (id, diesel, e5, e10)" +
                    "values (" +
                    "'" + station["id"] +
                    "', '" + str([station["diesel"], '0'][station["diesel"] is None]) +
@@ -50,12 +50,14 @@ def insertData(station, cursor):
 
 def start():
     for station in data.get('stations'):
+        print(station["id"], station["e5"])
         try:
             cursor = connection.cursor()
             if not stationExist(stationID=station["id"], cursor=cursor):
+                pass
                 createStation(station, cursor)
             insertData(station, cursor)
-            connection.commit()
+            #connection.commit()
         except:
             print("Error while fetching data!")
 
