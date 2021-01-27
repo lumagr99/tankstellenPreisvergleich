@@ -10,10 +10,10 @@ if not data.get('ok'):
     raise SystemExit('error while reeding data!')
 
 connection = mysql.connector.connect(
-    host="192.168.178.55",
+    host="45.88.109.79",
     user="tankstellenCrawler",
     password="kzuANqgSA3CsTOPr",
-    database="kzuANqgSA3CsTOPr"
+    database="tankstellenCrawler"
 )
 
 
