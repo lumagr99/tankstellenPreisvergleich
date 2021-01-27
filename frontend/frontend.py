@@ -123,15 +123,15 @@ def create_figure(preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_a
 
     if display_e5_avg:
         p_e5_avg = np.array(preise_e5_avg)
-        ax.plot(t, p_e5_avg, label="E5 Duchschnitt")
+        ax.plot(t, p_e5_avg, label="E5 Duchschnitt", linestyle=(0, (10, 10)))
 
     if display_e10_avg:
         p_e10_avg = np.array(preise_e10_avg)
-        ax.plot(t, p_e10_avg, label="E10 Duchschnitt")
+        ax.plot(t, p_e10_avg, label="E10 Duchschnitt", linestyle=(0, (10, 10)))
 
     if display_diesel_avg:
         p_diesel_avg = np.array(preise_diesel_avg)
-        ax.plot(t, p_diesel_avg, label="Diesel Duchschnitt")
+        ax.plot(t, p_diesel_avg, label="Diesel Duchschnitt", linestyle=(0, (10, 10)))
 
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')                        #Festlegen der Achsen beschriftung, Titel und position der Legende
