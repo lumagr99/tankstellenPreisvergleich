@@ -16,13 +16,14 @@ connection = mysql.connector.connect(
 )
 
 
+"""Überprüft ob eine Station existiert."""
 def stationExist(stationID, cursor):
     cursor.execute("select id from Tankstellen where id='" + stationID + "';")
     if len(cursor.fetchall()) == 1:
         return True
     return False
 
-
+"""Erstellt eine neue Station."""
 def createStation(station, cursor):
     cursor.execute("insert into Tankstellen (id, name, brand, houseNumber, postCode, place, lat, lng, street)" +
                    "VALUES (" +
@@ -37,6 +38,7 @@ def createStation(station, cursor):
                    ", '" + station["street"] + "');")
 
 
+"""Generiert die Query um Preisdaten der Datenbank hinzuzufügen."""
 def getinsertquery(station):
     return ("insert into Preise (id, diesel, e5, e10)" +
             " values (" +
@@ -47,6 +49,7 @@ def getinsertquery(station):
             "');")
 
 
+"""Startet einen Crawl durchlauf."""
 def start():
     cursor = connection.cursor()
     try:
