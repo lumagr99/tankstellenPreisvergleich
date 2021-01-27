@@ -1,6 +1,5 @@
 import urllib.request, json
 import mysql.connector
-import time
 
 url = "https://creativecommons.tankerkoenig.de/json/list.php?lat=51.324&lng=7.697&rad=25&sort=dist&type=all&apikey=33e99509-7b2b-c804-469d-45a316652ef6"
 response = urllib.request.urlopen(url)
@@ -12,8 +11,8 @@ if not data.get('ok'):
 connection = mysql.connector.connect(
     host="45.88.109.79",
     user="tankstellenCrawler",
-    password="kzuANqgSA3CsTOPr",
-    database="tankstellenCrawler"
+    password="qGD0zc5iKsvhyjwO",
+    database="tankdaten"
 )
 
 
@@ -38,38 +37,31 @@ def createStation(station, cursor):
                    ", '" + station["street"] + "');")
 
 
-def insertData(station, cursor):
-    print("insert into Preise (id, diesel, e5, e10)" +
-                   "values (" +
-                   "'" + station["id"] +
-                   "', '" + str([station["diesel"], '0'][station["diesel"] is None]) +
-                   "', '" + str([station["e5"], '0'][station["e5"] is None]) +
-                   "', '" + str([station["e10"], '0'][station["e10"] is None]) +
-                   "');")
+def getinsertquery(station):
+    return ("insert into Preise (id, diesel, e5, e10)" +
+            " values (" +
+            "'" + station["id"] +
+            "', '" + str([station["diesel"], '0'][station["diesel"] is None]) +
+            "', '" + str([station["e5"], '0'][station["e5"] is None]) +
+            "', '" + str([station["e10"], '0'][station["e10"] is None]) +
+            "');")
 
 
 def start():
-    for station in data.get('stations'):
-        print(station["id"], station["e5"])
-        try:
-            cursor = connection.cursor()
+    cursor = connection.cursor()
+    try:
+        for station in data.get('stations'):
             if not stationExist(stationID=station["id"], cursor=cursor):
-                pass
                 createStation(station, cursor)
-            insertData(station, cursor)
-            #connection.commit()
-        except:
-            print("Error while fetching data!")
+            cursor.execute(getinsertquery(station))
+        connection.commit()
+
+    except:
+        print("Error while fetching data!")
 
 
 # Für Cronjob start manuell auslösen.
-def startRepeat():
-    while True:
-        start()
-        time.sleep(300)
-
-
-startRepeat()
+start()
 
 # python 3
 # mit modulen
