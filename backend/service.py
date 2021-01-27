@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 d = ""
 
-d = DatabaseSingleton("localhost")
+d = DatabaseSingleton()
 print("service")
 #app.run()
 
@@ -62,7 +62,6 @@ def tankstellen():
         data = cursor.fetchall()
         ret = {}
         for c in data:
-            print(c[1])
             if c[0] not in ret:
                 ret[c[0]] = {
                     "name": c[1],
