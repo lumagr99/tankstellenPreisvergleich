@@ -60,6 +60,7 @@ def start():
             print("Error while fetching data!")
 
 
+# Für Cronjob start manuell auslösen.
 def startRepeat():
     while True:
         start()
@@ -68,12 +69,12 @@ def startRepeat():
 
 startRepeat()
 
-#python 3
-#mit modulen
-#import urllib.request, json
-#import mysql.connector
-#import time
+# python 3
+# mit modulen
+# import urllib.request, json
+# import mysql.connector
+# import time
 
-#sql benutzer mit passenden lesen, schreibe berechtigungen
+# sql benutzer mit passenden lesen, schreibe berechtigungen
 
-#das skript muss nach jedem system neustart einmalig neu gestartet werden
+# das skript muss nach jedem system neustart einmalig neu gestartet werden
