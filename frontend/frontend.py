@@ -109,7 +109,7 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
         if preis == 0:
             zero_count += 1
     if zero_count != len(p_e5):
-        ax.plot(t, p_e5, label="E5")
+        ax.plot(t, p_e5, label="E5", color="blue")
 
 
     zero_count = 0
@@ -117,26 +117,26 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
         if preis == 0:                  #Überprüfen, ob der preis einer Sorte duchgänig 0 ist, sonst Plotten der Sortenpreise
             zero_count += 1
     if zero_count != len(p_e10):
-        ax.plot(t, p_e10, label="E10")
+        ax.plot(t, p_e10, label="E10", color="red")
 
     zero_count = 0
     for preis in p_diesel:
         if preis == 0:
             zero_count += 1
     if zero_count != len(p_diesel):
-        ax.plot(t, p_diesel, label="Diesel")
+        ax.plot(t, p_diesel, label="Diesel", color="green")
 
     if display_e5_avg:
         p_e5_avg = np.array(preise_e5_avg)
-        ax.plot(t, p_e5_avg, label="E5 Duchschnitt", linestyle=(0, (10, 10)))
+        ax.plot(t, p_e5_avg, label="E5 Duchschnitt", linestyle=(0, (5, 2)), color="blue")
 
     if display_e10_avg:
         p_e10_avg = np.array(preise_e10_avg)
-        ax.plot(t, p_e10_avg, label="E10 Duchschnitt", linestyle=(0, (10, 10)))
+        ax.plot(t, p_e10_avg, label="E10 Duchschnitt", linestyle=(0, (5, 2)), color="red")
 
     if display_diesel_avg:
         p_diesel_avg = np.array(preise_diesel_avg)
-        ax.plot(t, p_diesel_avg, label="Diesel Duchschnitt", linestyle=(0, (10, 10)))
+        ax.plot(t, p_diesel_avg, label="Diesel Duchschnitt", linestyle=(0, (5, 2)), color="green")
 
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')                        #Festlegen der Achsen beschriftung, Titel und position der Legende
@@ -144,7 +144,6 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
 
     zeiten_axis = []
     for zeit in zeiten:
-        print(zeit[-2:])
         if zeit[-2:] == ":0":
             #print(zeit)
             zeiten_axis.append(zeit)
