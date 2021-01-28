@@ -156,7 +156,7 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
 """seite mit Der Preisentwicklung einer Tankstelle"""
 @app.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
-    url = backend_url_prefix + ":5000/tankstellen?filter=id&id=" + tankstelle_id
+    url = backend_url_prefix + ":5000/tankstellen?id=" + tankstelle_id
     print("URL", url)
     response = urllib.request.urlopen(url)              #Abfragen der Tankstellendaten aus dem Backend
     tankstellen_data = json.loads(response.read())
