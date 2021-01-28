@@ -46,8 +46,7 @@ def preise():
 
 
 """Anzeige von Tankstellen mit der URL /tankstellen und den URL-Parametern:
-filter = [all/id, default all]
-id = [tankstellenID, nur bei filter=id"""
+id = [tankstellenID, nur wenn nach ID gefiltert werden soll!"""
 
 
 @app.route('/tankstellen')

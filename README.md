@@ -17,4 +17,4 @@ URL: ./preise<br>
 
 URL: ./tankstellen<br>
     URL-Parameter:<br>
-        id = [TankstellenID] - Zeigt generelle Informationen wie Adresse von einer Tankstelle an.
+        id = [TankstellenID] - Zeigt generelle Informationen wie Adresse von einer Tankstelle an. Wenn kein Parameter angegeben wird, anzeige für alle Tankstellen.
