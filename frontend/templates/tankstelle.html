@@ -11,11 +11,11 @@
     <h2>{{ e5_avg }}</h2>
     <form action="" method="post" name="datum_select">
         <input type="date" name="datum" required="required" value="{{ datum }}"/>
-        <input type="checkbox" id="e5_avg" name="e5_avg"/>
+        <input type="checkbox" id="e5_avg" name="e5_avg" {%if e5_avg %} checked {% endif %}/>
         <label for="e5_avg">Duchchnitt E5</label>
-        <input type="checkbox" id="e10_avg" name="e10_avg"/>
+        <input type="checkbox" id="e10_avg" name="e10_avg" {%if e10_avg %} checked {% endif %}/>
         <label for="e10_avg">Duchchnitt E10</label>
-        <input type="checkbox" id="diesel_avg" name="diesel_avg"/>
+        <input type="checkbox" id="diesel_avg" name="diesel_avg" {%if diesel_avg %} checked {% endif %}/>
         <label for="e5_avg">Duchchnitt Diesel</label>
         <button type="submit">Tag anzeigen</button>
         <submit name="tag" value="Tag anzeigen"/>
