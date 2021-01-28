@@ -141,7 +141,15 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
     ax.set(xlabel='zeit (h)', ylabel='preis (€)',
            title='Preisverlauf')                        #Festlegen der Achsen beschriftung, Titel und position der Legende
     ax.legend(loc='upper left')
-    plt.xticks(range(0, len(p_e5)))
+
+    zeiten_axis = []
+    for zeit in zeiten:
+        print(zeit[-2:])
+        if zeit[-2:] == ":0":
+            #print(zeit)
+            zeiten_axis.append(zeit)
+
+    plt.xticks(zeiten_axis)  #abschnitte der X-Achse einstellen
     ax.grid()
     return fig
 
