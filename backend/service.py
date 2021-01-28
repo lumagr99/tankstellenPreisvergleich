@@ -52,46 +52,36 @@ id = [tankstellenID, nur bei filter=id"""
 
 @app.route('/tankstellen')
 def tankstellen():
-    filter = request.args.get('filter', default="all", type=str)
-    cursor = d.getCursor()
+    t_id = request.args.get('id', default="0", type=str)
 
-    # Zeigt alle Tankstellen an
-    if filter == "all":
-        cursor.execute("select id, name, place, street, housenumber from Tankstellen;")
-        data = cursor.fetchall()
-        ret = {}
-        for c in data:
-            if c[0] not in ret:
-                ret[c[0]] = {
-                    "name": c[1],
-                    "place": c[2],
-                    "street": c[3],
-                    "number": c[4]
+    query = "select id, name, place, street, housenumber, lat, lng from Tankstellen %s;"
+    if t_id != "0":
+        query = query.replace("%s", "where id = '" + t_id + "'")
+    else:
+        query = query.replace("%s", "")
+
+    cursor = d.getCursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+
+    ret = {}
+    for c in data:
+        if c[0] not in ret:
+            ret[c[0]] = {
+                "name": c[1],
+                "place": c[2],
+                "street": c[3],
+                "number": c[4],
+                "coord": {
+                    "lat": str(c[5]),
+                    "lng": str(c[6])
                 }
-        return ret
+            }
+    return ret
 
     # Zeigt eine Tankstelle an
     # Benötigter Parameter: id = [tankstellenID, default 0]
-    if filter == "id":
-        t_id = request.args.get('id', default="0", type=str)
-        if t_id == "0":
-            return "No ID!"
-        else:
-            cursor.execute(
-                "select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
-            data = cursor.fetchall()
-            ret = {}
-            for c in data:
-                if c[0] not in ret:
-                    ret[c[0]] = {
-                        "name": c[1],
-                        "place": c[2],
-                        "street": c[3],
-                        "number": c[4]
-                    }
-            return ret
-    cursor.close()
-    return "Anfrage nicht gefunden."
 
 
 """ONLY id, name, place, stress, housenumber"""
