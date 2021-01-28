@@ -82,7 +82,6 @@ def tankstellen():
             data = cursor.fetchall()
             ret = {}
             for c in data:
-                print(c[1])
                 if c[0] not in ret:
                     ret[c[0]] = {
                         "name": c[1],
@@ -146,29 +145,18 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
                 "avg(e10/" + str(avg['e10']) + ") as 'e10Faktor', " + \
                 "avg(diesel/" + str(avg['diesel']) + ") as 'dieselFaktor' FROM `Preise` " + \
                 "where %id timedate between '" + begin + "' and '" + end + "' " + \
-                "group by hours"
+                "group by hours, id;"
 
     if id == "":
         query = query.replace("%id", "")
     else:
         query = query.replace("%id", " id='" + id + "' and")
 
-    print(query)
     cursor = d.getCursor()
-
     cursor.execute(query)
+
     res = cursor.fetchall()
 
-    temp = []
-    for r in res:
-        temp.append(("AVG", r[1], r[2], r[3], r[4]))
-    res = temp
-
-    query = query + ", id;"
-    cursor.execute(query)
-
-    res = res + cursor.fetchall()
-    cursor.close()
     ret = {}
     for r in res:
         x = r[4]
@@ -202,6 +190,22 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
             "e10": e10,
             "diesel": diesel
         }
+
+    query = "SELECT round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, " +\
+            "CONCAT(HOUR(timedate), ':',MINUTE(timedate)) as hours FROM `Preise` where timedate between '" + begin + \
+            "' and '" + end + "' group by hours;"
+    cursor.execute(query)
+    res = cursor.fetchall()
+    cursor.close()
+
+    for r in res:
+        x = r[3]
+        ret[x]["AVG"] = {
+            "e5": r[0],
+            "e10": r[1],
+            "diesel": r[2]
+        }
+
     return ret
 
 
