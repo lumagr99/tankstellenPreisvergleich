@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from flask import Flask, render_template, Response, request
 import io
 import numpy as np
+from datetime import date
 
 
 app = Flask(__name__)
@@ -70,7 +71,9 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
     preise_e5_avg = []
     preise_e10_avg = []
     preise_diesel_avg = []
+    zeiten = []
     for zeit in preis_data:
+        zeiten.append(zeit)
         preise_e5.append(preis_data[zeit][tankstelle_id]["e5"]["price"])
         preise_e10.append(preis_data[zeit][tankstelle_id]["e10"]["price"])
         preise_diesel.append(preis_data[zeit][tankstelle_id]["diesel"]["price"])
@@ -81,7 +84,7 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
         if display_diesel_avg == True:
             preise_diesel_avg.append(preis_data[zeit]["AVG"]["diesel"])
 
-    fig = create_figure(preise_e5, preise_e10, preise_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, display_e5_avg, display_e10_avg, display_diesel_avg)
+    fig = create_figure(zeiten,preise_e5, preise_e10, preise_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, display_e5_avg, display_e10_avg, display_diesel_avg)
     output = io.BytesIO()                                       #Graph erstellen und auf Canvas bringen
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png') #URL für Graph(png) zuruckgeben
@@ -90,8 +93,8 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
 """Funktion zu erstellung eines Plots"""
 
 
-def create_figure(preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, display_e5_avg, display_e10_avg, display_diesel_avg):
-    t = np.array(range(0, len(preis_e5)))
+def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, display_e5_avg, display_e10_avg, display_diesel_avg):
+    t = np.array(zeiten)
     p_e5 = np.array(preis_e5) #Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)
@@ -153,7 +156,7 @@ def tankstelle(tankstelle_id):
     display_diesel_avg = False
 
     if request.method == "GET":
-        datum = "2021-01-17"                #Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
+        datum = date.today()               #Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
         return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"], tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg, e10_avg=display_e10_avg, diesel_avg=display_diesel_avg)
     else:
         if request.form.get("e5_avg") == "on":
