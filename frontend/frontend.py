@@ -14,6 +14,8 @@ app = Flask(__name__)
 
 backend_url_prefix = "http://localhost"
 
+#TODO Nur ganze Stunden auf der X-Achse
+
 
 
 """Startseite mit der liste aller Tankstellen"""
@@ -35,7 +37,7 @@ def index():
 
 """Funktion zur Rückgabe der Preis daten einer Tankstelle"""
 def get_preis_data(tankstellen_id, begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
-    url = "http://127.0.0.1:5000/preise?filter=id&begin"+ begin + end + "&interval=hours&id=" + tankstellen_id
+    url = "http://127.0.0.1:5000/preise?filter=id&begin"+ begin + end + "&interval=hourmin&id=" + tankstellen_id
     response = urllib.request.urlopen(url)
     preis_data = json.loads(response.read())
     print(preis_data)
@@ -148,6 +150,7 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
 @app.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
     url = backend_url_prefix + ":5000/tankstellen?filter=id&id=" + tankstelle_id
+    print("URL", url)
     response = urllib.request.urlopen(url)              #Abfragen der Tankstellendaten aus dem Backend
     tankstellen_data = json.loads(response.read())
 

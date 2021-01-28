@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 d = ""
 
-d = DatabaseSingleton()
+d = DatabaseSingleton.getInstance()
 print("service")
 #app.run()
 
@@ -53,11 +53,10 @@ id = [tankstellenID, nur bei filter=id"""
 @app.route('/tankstellen')
 def tankstellen():
     filter = request.args.get('filter', default="all", type=str)
-    # cursor = connection.cursor()
+    cursor = d.getCursor()
 
     # Zeigt alle Tankstellen an
     if filter == "all":
-        cursor = d.getCursor()
         cursor.execute("select id, name, place, street, housenumber from Tankstellen;")
         data = cursor.fetchall()
         ret = {}
@@ -78,7 +77,6 @@ def tankstellen():
         if t_id == "0":
             return "No ID!"
         else:
-            cursor = d.getCursor()
             cursor.execute(
                 "select id, name, place, street, housenumber from Tankstellen where id = '" + t_id + "';")
             data = cursor.fetchall()
@@ -93,7 +91,7 @@ def tankstellen():
                         "number": c[4]
                     }
             return ret
-
+    cursor.close()
     return "Anfrage nicht gefunden."
 
 
@@ -142,6 +140,13 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
                 "avg(diesel/" + str(avg['diesel']) + ") as 'dieselFaktor' FROM `Preise` " + \
                 "where %id timedate between '" + begin + "' and '" + end + "' " + \
                 "group by HOUR(timedate)"
+    elif interval == "hourmin":
+        query = "SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, CONCAT(HOUR(timedate), ':',MINUTE(timedate)) as hours, " + \
+                "avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', " + \
+                "avg(e10/" + str(avg['e10']) + ") as 'e10Faktor', " + \
+                "avg(diesel/" + str(avg['diesel']) + ") as 'dieselFaktor' FROM `Preise` " + \
+                "where %id timedate between '" + begin + "' and '" + end + "' " + \
+                "group by hours"
 
     if id == "":
         query = query.replace("%id", "")
@@ -163,7 +168,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
     cursor.execute(query)
 
     res = res + cursor.fetchall()
-
+    cursor.close()
     ret = {}
     for r in res:
         x = r[4]
