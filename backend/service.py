@@ -14,14 +14,14 @@ d = ""
 
 d = DatabaseSingleton.getInstance()
 print("service")
-#app.run()
+# app.run()
 
 """ Ermittlung der durchschnittlichen Kraftstoffpreise
 mit der URL /preise und den URL-Parametern:
 filter=[all/durchschnitt],
 begin=[StartZeitpunkt, default 2021-01-15 00:00:00],
 end=[endZeitpunkt, default currentTimestamp]
-interval=[days/hours/weekdays, gibt Monatstage, Stunden oder Wochentage genaue Preisstatistik, nur bei filter=[all/id]]
+interval=[days/hours/weekdays/hourmin, gibt Monatstage, Stunden, Wochentage oder Stunden:Minuten genaue Preisstatistik, nur bei filter=[all/id]]
 id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
 
 
@@ -115,7 +115,7 @@ def sqlToJSONTankstelle(result):
 
 """Ermittelt eine Liste von Preisen, orientiert an Stunden [hours], Wochentagen [weekdays] oder Monatstagen [days], 
 nach IDs aufgeteilt oder nicht.
-Stunden [hours] oder Tage [days] können angegeben werden.
+Stunden [hours],  Tage [days], Wochentage [weekdays] oder Stunden:Minuten [hourmin] können angegeben werden.
 begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
 id angeben um nach der id zu filtern"""
 
@@ -191,7 +191,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
             "diesel": diesel
         }
 
-    query = "SELECT round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, " +\
+    query = "SELECT round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, " + \
             "CONCAT(HOUR(timedate), ':',MINUTE(timedate)) as hours FROM `Preise` where timedate between '" + begin + \
             "' and '" + end + "' group by hours;"
     cursor.execute(query)

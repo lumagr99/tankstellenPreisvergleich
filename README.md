@@ -10,7 +10,7 @@ URL: ./preise<br>
         id = [TankstellenID]<br>
         filter=[all/durchschnitt/id]<br>
             all: Zeigt alle Tankstellen -> 
-                interval = [days/hours/weekdays]<br>
+                interval = [days/hours/weekdays/hourmin]<br>
             durchschnitt: Zeigt den Durchschnitt der Preise -> 
                 interval = [days/hours/weekdays]<br>
             id: Zeigt eine Tankstelle, ID Parameter muss angegeben werden!<br>
