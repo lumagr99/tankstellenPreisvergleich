@@ -79,28 +79,6 @@ def tankstellen():
             }
     return ret
 
-    # Zeigt eine Tankstelle an
-    # Benötigter Parameter: id = [tankstellenID, default 0]
-
-
-"""ONLY id, name, place, stress, housenumber"""
-
-
-def sqlToJSONTankstelle(result):
-    data = []
-
-    for res in result:
-        x = {
-            "id": res[0],
-            "name": res[1],
-            "place": res[2],
-            "street": res[3],
-            "housenumber": res[4]
-        }
-        data.append(x)
-
-    return json.dumps(data)
-
 
 """Ermittelt eine Liste von Preisen, orientiert an Stunden [hours], Wochentagen [weekdays] oder Monatstagen [days], 
 nach IDs aufgeteilt oder nicht.
@@ -143,7 +121,6 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
 
     cursor = d.getCursor()
     cursor.execute(query)
-
     res = cursor.fetchall()
 
     ret = {}
@@ -208,6 +185,7 @@ def durchschnittsWerte(begin, end):
          "timedate BETWEEN '" + begin + "' "
                                         "AND '" + end + "' AND e5 <> 0 AND e10 <> 0 AND diesel <> 0")
     result = cursor.fetchall()
+    cursor.close()
     ret = {'e10': result[0][0], 'e5': result[0][1], 'diesel': result[0][2],
            'time': {'begin': begin, 'end': end}}
     return ret
