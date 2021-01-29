@@ -159,7 +159,8 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
 
     query = "SELECT round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, " + \
             "CONCAT(HOUR(timedate), ':',MINUTE(timedate)) as hours FROM `Preise` where timedate between '" + begin + \
-            "' and '" + end + "' group by hours;"
+            "' and '" + end + "' group by hours order by timedate;"
+    print(query)
     cursor.execute(query)
     res = cursor.fetchall()
     cursor.close()
