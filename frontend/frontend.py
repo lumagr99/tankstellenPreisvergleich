@@ -8,7 +8,7 @@ from flask import Flask, render_template, Response, request
 import io
 import numpy as np
 from datetime import date
-
+import matplotlib.ticker as plticker
 
 app = Flask(__name__)
 
@@ -37,10 +37,10 @@ def index():
 
 """Funktion zur Rückgabe der Preis daten einer Tankstelle"""
 def get_preis_data(tankstellen_id, begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
-    url = "http://127.0.0.1:5000/preise?filter=id&begin"+ begin + end + "&interval=hourmin&id=" + tankstellen_id
+    url = "http://127.0.0.1:5000/preise?filter=id&begin="+ begin + "&end=" + end + "&interval=hourmin&id=" + tankstellen_id
     response = urllib.request.urlopen(url)
     preis_data = json.loads(response.read())
-    print(preis_data)
+    print(type(preis_data))
     return preis_data
 
 
@@ -96,11 +96,13 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
 
 
 def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg, display_e5_avg, display_e10_avg, display_diesel_avg):
-    t = np.array(zeiten)
+    t = []
+    for zeit in zeiten:
+        t.append(str(float(zeit.split(":")[0]) + float(zeit.split(":")[1]) / 60))
+    t.sort(key=float)
     p_e5 = np.array(preis_e5) #Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)
-
 
     fig, ax = plt.subplots()
 
@@ -142,13 +144,11 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
            title='Preisverlauf')                        #Festlegen der Achsen beschriftung, Titel und position der Legende
     ax.legend(loc='upper left')
 
-    zeiten_axis = []
-    for zeit in zeiten:
-        if zeit[-2:] == ":0":
-            #print(zeit)
-            zeiten_axis.append(zeit)
 
-    plt.xticks(zeiten_axis)  #abschnitte der X-Achse einstellen
+    print(t)
+    X_TICKS = 4
+    plt.xticks(range(0, len(t), X_TICKS), t[::X_TICKS], rotation=(45), fontsize=(10)) #nur jeden vierten wert aus t benutzen (volle Stunden)
+
     ax.grid()
     return fig
 
