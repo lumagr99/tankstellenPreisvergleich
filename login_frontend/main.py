@@ -33,5 +33,10 @@ def login():
             msg = 'Ups, das war wohl nichts!'
     return render_template('index.html', msg=msg)
 
+def logout():
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('benutzername', None)
+    return redirect(url_for('login'))
 
 app.run()
