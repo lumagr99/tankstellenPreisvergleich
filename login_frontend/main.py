@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
+import hashlib
 import re
 
 app = Flask(__name__)
@@ -22,7 +23,7 @@ def login():
         benutzername = request.form['username']
         password = request.form['password']
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM Benutzer WHERE benutzername = %s AND password = %s', (benutzername, password))
+        cursor.execute('SELECT * FROM Benutzer WHERE benutzername = %s AND password = %s', (benutzername, hash_sha256(password)))
         account = cursor.fetchone()
         if account:
             session['loggedin'] = True
@@ -48,7 +49,7 @@ def register():
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'password' in request.form:
         benutzername = request.form['username']
         password = request.form['password']
-        msg = createAccount(benutzername, password)
+        msg = createAccount(benutzername, hash_sha256(password))
     elif request.method == 'POST':
         msg = 'Füll bitte das Formular aus!'
 
@@ -75,6 +76,16 @@ def createAccount(benutzername, password):
         mysql.connection.commit()
         msg = 'Du wurdest erfolgreich Registriert!'
     return msg
+
+
+"""Hasht einen angegeben String mit SHA 256."""
+
+
+def hash_sha256(text_string):
+    print(text_string)
+    text_string = hashlib.sha256(text_string.encode()).hexdigest()
+    print(text_string)
+    return text_string
 
 
 app.run()
