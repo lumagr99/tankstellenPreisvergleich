@@ -33,9 +33,12 @@ def show():
 
     if request.method == 'POST':
         if 'loggedin' in session:
-            update_favorites(session.get('id'), request.form)
+            update_favorites(session.get('id'), request.form)  # Aktualisierungen verarbeiten.
             return redirect(url_for('tankstellenliste.show'))
     return "Ein Fehler ist aufgetreten."
+
+
+"""Generiert eine Favoritenliste."""
 
 
 @page.route('/favoriten', methods=['GET', 'POST'])
@@ -48,9 +51,9 @@ def favorites():
             url = backend_url_prefix + "/tankstellen"
             response = urllib.request.urlopen(url)
             data = json.loads(response.read())  # Alle Tankstellen aus Backend abfragen
-            favoriten = {} #Liste von Tankstellenobjekten
-            favoriten_ids = get_favorites(id) #Liste von IDs
-            for t in data: #IDs in Tankstellenobjekte umwandeln
+            favoriten = {}  # Liste von Tankstellenobjekten
+            favoriten_ids = get_favorites(id)  # Liste von IDs
+            for t in data:  # IDs in Tankstellenobjekte umwandeln
                 if t in favoriten_ids:
                     favoriten[t] = data[t]
 
@@ -58,12 +61,12 @@ def favorites():
 
     if request.method == 'POST':
         if 'loggedin' in session:
-            update_favorites(session.get('id'), request.form)
+            update_favorites(session.get('id'), request.form)  # Aktualisierungen verarbeiten.
             return redirect(url_for('tankstellenliste.favorites'))
     return "Ein Fehler ist aufgetreten."
 
 
-"""Stellt die Daten für eine Tankstellenliste bereit."""
+"""Übergibt die notwendigen Daten."""
 
 
 def show_tankstellen(id, tankstellen, favorites, action):
@@ -110,8 +113,3 @@ def update_favorites(id, favorite_tankstellen):
 @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
     return "Coming soon!"
-
-
-@page.route("/tankstellen/favoriten")
-def favoriten():
-    pass
