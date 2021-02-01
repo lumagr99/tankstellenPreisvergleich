@@ -1,21 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import hashlib
 import string, random
 
 from login_frontend import tankstellenliste
+import mysql.connector
+
+db = mysql.connector.connect(
+                host="45.88.109.79",
+                user="tankstellenCrawler",
+                password="qGD0zc5iKsvhyjwO",
+                database="tankdaten"
+            )
 
 app = Flask(__name__)
+
 app.register_blueprint(tankstellenliste.page)
 app.secret_key = 'FlaskLoginTest'
 
-app.config['MYSQL_HOST'] = '45.88.109.79'
-app.config['MYSQL_USER'] = 'tankstellenCrawler'
-app.config['MYSQL_PASSWORD'] = 'qGD0zc5iKsvhyjwO'
-app.config['MYSQL_DB'] = 'tankdaten'
-
-mysql = MySQL(app)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -24,13 +26,16 @@ def login():
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         benutzername = request.form['username']
         password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = db.cursor()
         cursor.execute('SELECT * FROM Benutzer WHERE benutzername = %s', (benutzername,))
         account = cursor.fetchone()
-        if account['password'] == hash_sha256(password + account['salt']):
+        cursor.close()
+        db.commit()
+        print(account)
+        if account[2] == hash_sha256(password + account[3]):
             session['loggedin'] = True
-            session['id'] = account['id']
-            session['benutzername'] = account['benutzername']
+            session['id'] = account[0]
+            session['benutzername'] = account[1]
             return redirect(url_for('tankstellenliste.show'))
         else:
             msg = 'Ups, das war wohl nichts!'
@@ -65,7 +70,7 @@ Generiert zum Passwort einen Salt und Hasht die kombination beider."""
 
 def createAccount(benutzername, password):
     msg = ''
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = db.cursor()
     cursor.execute('SELECT * FROM Benutzer WHERE benutzername = %s', (benutzername,))
     account = cursor.fetchone()
 
@@ -80,8 +85,9 @@ def createAccount(benutzername, password):
         salt = ''.join(random.sample(string.ascii_lowercase, 10))
         cursor.execute('INSERT INTO Benutzer(benutzername, password, salt) VALUES (%s, %s, %s)',
                        (benutzername, hash_sha256(password + salt), salt,))
-        mysql.connection.commit()
+        cursor.close()
         msg = 'Du wurdest erfolgreich Registriert!'
+    db.commit()
     return msg
 
 

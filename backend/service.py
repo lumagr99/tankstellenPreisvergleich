@@ -14,7 +14,6 @@ d = ""
 
 d = DatabaseSingleton.getInstance()
 print("service")
-# app.run()
 
 """ Ermittlung der durchschnittlichen Kraftstoffpreise
 mit der URL /preise und den URL-Parametern:
