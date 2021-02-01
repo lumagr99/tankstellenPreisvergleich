@@ -15,52 +15,103 @@ db = mysql.connector.connect(
     database="tankdaten"
 )
 
-
 """Zeigt eine Übersicht über alle Tankstellen.
 Ermöglicht das zuordnen von Favoriten."""
+
+
 @page.route('/tankstellen', methods=['GET', 'POST'])
 def show():
     if request.method == 'GET':
-        usertankstellen = []
         url = backend_url_prefix + "/tankstellen"
         response = urllib.request.urlopen(url)
         data = json.loads(response.read())  # Alle Tankstellen aus Backend abfragen
 
-        id = ""
+        id = "-1"
         if 'loggedin' in session:
             id = session.get('id')
-            cursor = db.cursor()
-            cursor.execute('SELECT tankstellenid FROM Benutzer2Tankstelle where BenutzerID = %s;', (id,))
-            for curr in cursor.fetchall():
-                usertankstellen.append(curr[0])
-            cursor.close()
-        db.commit()
+        return show_tankstellen(id, data, get_favorites(id), "tankstellenliste.show")
 
-        tankstellen_list = []
-        for t in data:
-            tankstellen_list.append(
-                [data[t]["name"] + "-" + data[t]["place"], t])  # Alle Tankstellen in einer Liste speichern
-
-        return render_template('tankstellen.html', tankstellen=tankstellen_list, usertankstellen=usertankstellen)
     if request.method == 'POST':
         if 'loggedin' in session:
-            id = session.get('id')
-
-            cursor = db.cursor()
-            # Alle Zuordnungen entfernen, anschließend neu zuordnen.
-            cursor.execute(
-                'DELETE FROM Benutzer2Tankstelle WHERE benutzerID = %s',
-                (id,))
-            for item in request.form:
-                if request.form[item] == 'on':
-                    cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s)',
-                                   (id, item[:-9],))
-            cursor.close()
-            db.commit()
+            update_favorites(session.get('id'), request.form)
             return redirect(url_for('tankstellenliste.show'))
     return "Ein Fehler ist aufgetreten."
+
+
+@page.route('/favoriten', methods=['GET', 'POST'])
+def favorites():
+    if request.method == 'GET':
+        id = "-1"
+        if 'loggedin' in session:
+            id = session.get('id')
+
+            url = backend_url_prefix + "/tankstellen"
+            response = urllib.request.urlopen(url)
+            data = json.loads(response.read())  # Alle Tankstellen aus Backend abfragen
+            favoriten = {} #Liste von Tankstellenobjekten
+            favoriten_ids = get_favorites(id) #Liste von IDs
+            for t in data: #IDs in Tankstellenobjekte umwandeln
+                if t in favoriten_ids:
+                    favoriten[t] = data[t]
+
+            return show_tankstellen(id, favoriten, favoriten_ids, "tankstellenliste.favorites")
+
+    if request.method == 'POST':
+        if 'loggedin' in session:
+            update_favorites(session.get('id'), request.form)
+            return redirect(url_for('tankstellenliste.favorites'))
+    return "Ein Fehler ist aufgetreten."
+
+
+"""Stellt die Daten für eine Tankstellenliste bereit."""
+
+
+def show_tankstellen(id, tankstellen, favorites, action):
+    tankstellen_list = []
+    for t in tankstellen:
+        tankstellen_list.append(
+            [tankstellen[t]["name"] + "-" + tankstellen[t]["place"], t])  # Alle Tankstellen in einer Liste speichern
+
+    return render_template('tankstellen.html', tankstellen=tankstellen_list, usertankstellen=favorites, action=action)
+
+
+"""Holt die favoriten Tankstellen anhand einer BenutzerID"""
+"""Holt die favoriten Tankstellen anhand einer BenutzerID"""
+
+
+def get_favorites(id):
+    usertankstellen = []
+    cursor = db.cursor()
+    cursor.execute('SELECT tankstellenid FROM Benutzer2Tankstelle where BenutzerID = %s;', (id,))
+    for curr in cursor.fetchall():
+        usertankstellen.append(curr[0])
+    cursor.close()
+    db.commit()
+    return usertankstellen
+
+
+"""Updated die favoritisierten Tankstellen für eine BenutzerID id und einer Liste von Tankstellen"""
+
+
+def update_favorites(id, favorite_tankstellen):
+    cursor = db.cursor()
+    # Alle Zuordnungen entfernen, anschließend neu zuordnen.
+    cursor.execute(
+        'DELETE FROM Benutzer2Tankstelle WHERE benutzerID = %s',
+        (id,))
+    for item in favorite_tankstellen:
+        if request.form[item] == 'on':
+            cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s)',
+                           (id, item[:-9],))
+    cursor.close()
+    db.commit()
 
 
 @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
     return "Coming soon!"
+
+
+@page.route("/tankstellen/favoriten")
+def favoriten():
+    pass
