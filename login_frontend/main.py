@@ -31,7 +31,6 @@ def login():
         account = cursor.fetchone()
         cursor.close()
         db.commit()
-        print(account)
         if account[2] == hash_sha256(password + account[3]):
             session['loggedin'] = True
             session['id'] = account[0]
