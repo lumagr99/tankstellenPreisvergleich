@@ -26,7 +26,9 @@
                 </tr>
                 {% endfor %}
             </table>
-            <input type="submit" value="Speichern">
+            {% if session['loggedin'] == True %}
+                <input type="submit" value="Speichern">
+            {% endif %}
         </form>
     </div>
 </main>
