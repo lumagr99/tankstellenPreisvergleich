@@ -4,7 +4,10 @@ import MySQLdb.cursors
 import hashlib
 import string, random
 
+from login_frontend import tankstellenliste
+
 app = Flask(__name__)
+app.register_blueprint(tankstellenliste.page)
 app.secret_key = 'FlaskLoginTest'
 
 app.config['MYSQL_HOST'] = '45.88.109.79'
@@ -28,7 +31,7 @@ def login():
             session['loggedin'] = True
             session['id'] = account['id']
             session['benutzername'] = account['benutzername']
-            return 'Du hast dich erfolgreich eingeloggt!'
+            return redirect(url_for('tankstellenliste.show'))
         else:
             msg = 'Ups, das war wohl nichts!'
     return render_template('index.html', msg=msg)
@@ -90,4 +93,15 @@ def hash_sha256(text_string):
     return text_string
 
 
-app.run()
+# http://localhost:5000/pythinlogin/home - this will be the home page, only accessible for loggedin users
+@app.route('/pythonlogin/home')
+def home():
+    # Check if user is loggedin
+    if 'loggedin' in session:
+        # User is loggedin show them the home page
+        return render_template('home.html', username=session['benutzername'])
+    # User is not loggedin redirect to login page
+    return redirect(url_for('login'))
+
+
+app.run(port=int(8080), debug=True)

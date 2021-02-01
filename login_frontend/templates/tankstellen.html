@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Author" content="Luca Graef, Jonas Kloos, Sven Rust">
+    <meta name="description" content="Benzinpreise">
+</head>
+
+<body>
+<h1>Benzinpreise</h1>
+<main>
+    <div>
+        <h2>Alle Tankstellen:</h2>
+        <table>
+            {%for t in tankstellen%}
+            <tr>
+                <th><a href="{{ url_for('tankstellenliste.tankstelle', tankstelle_id=t[1]) }}"> {{ t[0] }}</a></th>
+                {% if session['loggedin'] == True %}
+                <th><input type="checkbox"></th>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+        <button>Speichern</button>
+    </div>
+</main>
+</body>
+</html>
