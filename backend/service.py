@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+import mysql
 from flask import Flask
 from flask import request
 
@@ -10,9 +11,15 @@ app = Flask(__name__)
 
 # TODO fehlerhafte parameter abfangen
 
-d = ""
+db = mysql.connector.connect(
+    host="45.88.109.79",
+    user="tankstellenCrawler",
+    password="qGD0zc5iKsvhyjwO",
+    database="tankdaten",
+    autocommit=True
+)
 
-d = DatabaseSingleton.getInstance()
+
 print("service")
 
 """ Ermittlung der durchschnittlichen Kraftstoffpreise
@@ -58,7 +65,7 @@ def tankstellen():
     else:
         query = query.replace("%s", "")
 
-    cursor = d.getCursor()
+    cursor = db.cursor()
     cursor.execute(query)
     data = cursor.fetchall()
     cursor.close()
@@ -118,7 +125,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
     else:
         query = query.replace("%id", " id='" + id + "' and")
 
-    cursor = d.getCursor()
+    cursor = db.cursor()
     cursor.execute(query)
     res = cursor.fetchall()
 
@@ -179,7 +186,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
 
 
 def durchschnittsWerte(begin, end):
-    cursor = d.getCursor()
+    cursor = db.cursor()
     cursor.execute \
         ("select avg(e10), avg(e5), avg(diesel) from Preise where "
          "timedate BETWEEN '" + begin + "' "

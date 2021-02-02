@@ -12,7 +12,8 @@ db = mysql.connector.connect(
     host="45.88.109.79",
     user="tankstellenCrawler",
     password="qGD0zc5iKsvhyjwO",
-    database="tankdaten"
+    database="tankdaten",
+    autocommit=True
 )
 
 """Zeigt eine Übersicht über alle Tankstellen.
