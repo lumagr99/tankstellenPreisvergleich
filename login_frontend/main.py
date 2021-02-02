@@ -40,7 +40,7 @@ def login():
             msg = 'Ups, das war wohl nichts!'
     return render_template('index.html', msg=msg)
 
-
+@app.route('/logout', methods=['GET'])
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
