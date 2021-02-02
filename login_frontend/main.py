@@ -3,7 +3,7 @@ import MySQLdb.cursors
 import hashlib
 import string, random
 
-from login_frontend import tankstellenliste
+from login_frontend import tankstellenliste, karte
 import mysql.connector
 
 db = mysql.connector.connect(
@@ -16,6 +16,7 @@ db = mysql.connector.connect(
 app = Flask(__name__)
 
 app.register_blueprint(tankstellenliste.page)
+app.register_blueprint(karte.page)
 app.secret_key = 'FlaskLoginTest'
 
 

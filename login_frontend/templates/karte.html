@@ -1,0 +1,80 @@
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css"/>
+</head>
+
+<body style='margin: 0'>
+<div style="width: 100%; height: 100%" id="mapContainer"></div>
+
+<script>
+    // Here initialisieren
+    var platform = new H.service.Platform({
+        'apikey': '_gWQjrbfaaOg4bBFujXoVO35IsD6YwovSG1vYZy7o8w'
+    });
+    //Ausgangsposition
+    const lat = 51.3765;
+    const long = 7.6960;
+
+    var maptypes = platform.createDefaultLayers();
+
+    // Init der Map
+    var map = new H.Map(
+        document.getElementById('mapContainer'),
+        maptypes.raster.terrain.map,
+        {
+            zoom: 15,
+            center: {lat: lat, lng: long}
+        });
+
+    // Events aktivieren
+    var mapEvents = new H.mapevents.MapEvents(map);
+
+    // Event Listener hinzufügen
+    map.addEventListener('tap', function (evt) {
+        // Log 'tap' and 'mouse' events:
+        console.log(evt.type, evt.currentPointer.type);
+    });
+
+    // Instantiate the default behavior, providing the mapEvents object:
+    var behavior = new H.mapevents.Behavior(mapEvents);
+
+    // UI erstellen
+    var ui = H.ui.UI.createDefault(map, maptypes);
+
+    function addMarkerToGroup(group, coordinate, html) {
+        let marker = new H.map.Marker(coordinate);
+        marker.setData(html);
+        group.addObject(marker);
+    }
+
+    function addInfoBubble(map) {
+        let group = new H.map.Group();
+
+        map.addObject(group);
+
+        group.addEventListener('tap', function (evt) {
+            let bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
+                content: evt.target.getData()
+            });
+            ui.addBubble(bubble);
+        }, false);
+        addMarkerToGroup(group, {lat: 53.439, lng: -2.221},
+            '<div><a href="http://www.mcfc.co.uk" target="_blank">Manchester City</a>' +
+            '</div><div >City of Manchester Stadium<br>Capacity: 48,000</div>');
+
+        addMarkerToGroup(group, {lat: 53.430, lng: -2.961},
+            '<div><a href="http://www.liverpoolfc.tv" target="_blank">Liverpool</a>' +
+            '</div><div >Anfield<br>Capacity: 45,362</div>');
+    }
+
+    addInfoBubble(map)
+
+
+</script>
+</body>
+</html>
