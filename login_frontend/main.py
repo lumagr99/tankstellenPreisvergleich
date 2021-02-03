@@ -110,8 +110,8 @@ def home():
     return redirect(url_for('login'))
 
 @app.route('/')
-def test():
-    return render_template('layout.html')
+def start():
+    return render_template('start.html')
 
 
 app.run(port=int(8080), debug=True)

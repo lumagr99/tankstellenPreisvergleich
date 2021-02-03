@@ -5,20 +5,21 @@
     <meta name="Author" content="Luca Graef, Jonas Kloos, Sven Rust">
     <meta name="description" content="Benzinpreise">
     <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='marker.png')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 <div class="links">
     <title>FahrHeiter SWF</title>
     <img src="{{url_for('static', filename='logo.png')}}" alt="Fahr Heiter Logo."/>
-    <a href="" class="active">Start</a>
-    <a href="{{ url_for('tankstellenliste.show')}}" class="active">Tankstellen</a>
+    <a class="block" href="{{ url_for('start')}}" class="active">Start</a>
+    <a class="block" href="{{ url_for('tankstellenliste.show')}}" class="active">Tankstellen</a>
     {% if session['loggedin'] == True %}
-    <a href="{{url_for('tankstellenliste.favorites')}}" class="active">Favoriten</a>
-    <a href="{{url_for('logout')}}" class="active">Logout</a>
+    <a class="block" href="{{url_for('tankstellenliste.favorites')}}" class="active">Favoriten</a>
+    <a class="block" href="{{url_for('logout')}}" class="active">Logout</a>
     {% else %}
-    <a href="{{ url_for('login') }}" class="active">Login</a>
-    <a href="{{ url_for('register') }}" class="active">Registrieren</a>
+    <a class="block" href="{{ url_for('login') }}" class="active">Login</a>
+    <a class="block" href="{{ url_for('register') }}" class="active">Registrieren</a>
     {% endif %}
 </div>
 <main>
