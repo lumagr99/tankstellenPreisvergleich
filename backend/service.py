@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-import mysql
+import mysql.connector
 from flask import Flask
 from flask import request
 
