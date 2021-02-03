@@ -1,6 +1,6 @@
 <html>
 <head>
-    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" charset="UTF-8"/>
     <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
@@ -34,12 +34,6 @@
     // Events aktivieren
     var mapEvents = new H.mapevents.MapEvents(map);
 
-    // Event Listener hinzufügen
-    map.addEventListener('tap', function (evt) {
-        // Log 'tap' and 'mouse' events:
-        console.log(evt.type, evt.currentPointer.type);
-    });
-
     // Instantiate the default behavior, providing the mapEvents object:
     var behavior = new H.mapevents.Behavior(mapEvents);
 
@@ -52,6 +46,8 @@
         group.addObject(marker);
     }
 
+    let tankstellen = JSON.parse(transform('{{tankstellen_list}}').replaceAll("'", '"'));
+
     function addInfoBubble(map) {
         let group = new H.map.Group();
 
@@ -63,13 +59,20 @@
             });
             ui.addBubble(bubble);
         }, false);
-        addMarkerToGroup(group, {lat: 53.439, lng: -2.221},
-            '<div><a href="http://www.mcfc.co.uk" target="_blank">Manchester City</a>' +
-            '</div><div >City of Manchester Stadium<br>Capacity: 48,000</div>');
 
-        addMarkerToGroup(group, {lat: 53.430, lng: -2.961},
-            '<div><a href="http://www.liverpoolfc.tv" target="_blank">Liverpool</a>' +
-            '</div><div >Anfield<br>Capacity: 45,362</div>');
+        for (t in tankstellen) {
+            let curr = tankstellen[t];
+            let url = "/tankstelle/" + t;
+            addMarkerToGroup(group, {lat: curr["coord"]["lat"], lng: curr["coord"]["lng"]},
+                "<div><a href=" + url + " target='_blank'>" + curr["name"] + "</a>");
+        }
+    }
+
+    function transform(str) {
+        return str.replace(/&#([0-9]{1,3});/gi, function (match, numStr) {
+            let num = parseInt(numStr, 10); // read num as normal number
+            return String.fromCharCode(num);
+        });
     }
 
     addInfoBubble(map)

@@ -109,5 +109,9 @@ def home():
     # User is not loggedin redirect to login page
     return redirect(url_for('login'))
 
+@app.route('/')
+def test():
+    return render_template('layout.html')
+
 
 app.run(port=int(8080), debug=True)
