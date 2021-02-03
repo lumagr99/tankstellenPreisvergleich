@@ -40,7 +40,7 @@
     // UI erstellen
     var ui = H.ui.UI.createDefault(map, maptypes);
 
-    let svg = new H.map.Icon("{{url_for('static', filename='marker.png')}}", {size:{w: 50, h:50}});
+    let svg = new H.map.Icon("{{url_for('static', filename='marker.png')}}", {size:{w: 50, h:65}});
     console.log(svg)
 
     function addMarkerToGroup(group, coordinate, html) {
