@@ -5,8 +5,6 @@ import mysql
 from flask import Flask
 from flask import request
 
-from backend.database.DatabaseSingleton import DatabaseSingleton
-
 app = Flask(__name__)
 
 # TODO fehlerhafte parameter abfangen
