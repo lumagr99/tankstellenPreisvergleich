@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="Author" content="Luca Graef, Jonas Kloos, Sven Rust">
     <meta name="description" content="Benzinpreise">
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='marker.png')}}">
 </head>
 
 <body>
 <div class="links">
+    <title>FahrHeiter SWF</title>
+    <img src="{{url_for('static', filename='logo.png')}}" alt="Fahr Heiter Logo."/>
     <a href="" class="active">Start</a>
     <a href="{{ url_for('tankstellenliste.show')}}" class="active">Tankstellen</a>
     {% if session['loggedin'] == True %}
