@@ -1,16 +1,14 @@
 import json
 from datetime import datetime
 
-import mysql
+import mysql.connector
 from flask import Flask
 from flask import request
-
-from backend.database.DatabaseSingleton import DatabaseSingleton
 
 app = Flask(__name__)
 
 # TODO fehlerhafte parameter abfangen
-
+#Verbindungsdaten für Datenbank anlegen
 db = mysql.connector.connect(
     host="45.88.109.79",
     user="tankstellenCrawler",
@@ -30,7 +28,7 @@ end=[endZeitpunkt, default currentTimestamp]
 interval=[days/hours/weekdays/hourmin, gibt Monatstage, Stunden, Wochentage oder Stunden:Minuten genaue Preisstatistik, nur bei filter=[all/id]]
 id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
 
-
+#Return: JSON mit den angeforderten Daten
 @app.route('/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
@@ -43,11 +41,13 @@ def preise():
     # Durchschnittspreise für alle Kraftstoffarten
     if filter == "durchschnitt":
         return json.dumps(durchschnittsWerte(begin, end))
+    #Nur Preise für eine Tankstelle
     elif filter == "id":
         return json.dumps(getTankstellenPreis(interval, begin, end, id))
+    #Alle Preise von allen Tankstellen
     elif filter == "all":
         return json.dumps(getTankstellenPreis(interval, begin, end))
-
+    #Fehler, wenn falsche Parameter übergeben wurden 
     return "Anfrage nicht gefunden."
 
 
@@ -64,13 +64,14 @@ def tankstellen():
         query = query.replace("%s", "where id = '" + t_id + "'")
     else:
         query = query.replace("%s", "")
-
+    #SQL Datenbank ansprechen
     cursor = db.cursor()
     cursor.execute(query)
     data = cursor.fetchall()
     cursor.close()
 
     ret = {}
+    #In JSON umbauen
     for c in data:
         if c[0] not in ret:
             ret[c[0]] = {
@@ -124,12 +125,13 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         query = query.replace("%id", "")
     else:
         query = query.replace("%id", " id='" + id + "' and")
-
+    #Datenbank ansprechen
     cursor = db.cursor()
     cursor.execute(query)
     res = cursor.fetchall()
 
     ret = {}
+    #in JSON umbauen
     for r in res:
         x = r[4]
         if interval == "days":
@@ -139,7 +141,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         x = str(x)
         if x not in ret:
             ret[x] = {}
-
+      
         e5 = r[1]
         e10 = r[2]
         diesel = r[3]

@@ -64,7 +64,7 @@ def favorites():
         if 'loggedin' in session:
             update_favorites(session.get('id'), request.form)  # Aktualisierungen verarbeiten.
             return redirect(url_for('tankstellenliste.favorites'))
-    return "Ein Fehler ist aufgetreten."
+    return redirect(url_for('tankstellenliste.show'))
 
 
 """Übergibt die notwendigen Daten."""

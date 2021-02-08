@@ -1,0 +1,86 @@
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" charset="UTF-8"/>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css"/>
+</head>
+
+<body style='margin: 0'>
+<div style="width: 100%; height: 100%" id="mapContainer"></div>
+
+<script>
+    // Here initialisieren
+    var platform = new H.service.Platform({
+        'apikey': '_gWQjrbfaaOg4bBFujXoVO35IsD6YwovSG1vYZy7o8w'
+    });
+    //Ausgangsposition
+    const lat = 51.3765;
+    const long = 7.6960;
+
+    var maptypes = platform.createDefaultLayers();
+
+    // Init der Map
+    var map = new H.Map(
+        document.getElementById('mapContainer'),
+        maptypes.raster.terrain.map,
+        {
+            zoom: 15,
+            center: {lat: lat, lng: long}
+        });
+
+    // Events aktivieren
+    var mapEvents = new H.mapevents.MapEvents(map);
+
+    // Instantiate the default behavior, providing the mapEvents object:
+    var behavior = new H.mapevents.Behavior(mapEvents);
+
+    // UI erstellen
+    var ui = H.ui.UI.createDefault(map, maptypes);
+
+    let svg = new H.map.Icon("{{url_for('static', filename='marker.png')}}", {size:{w: 50, h:65}});
+    console.log(svg)
+
+    function addMarkerToGroup(group, coordinate, html) {
+        let marker = new H.map.Marker(coordinate, {icon: svg});
+        marker.setData(html);
+        group.addObject(marker);
+    }
+
+    let tankstellen = JSON.parse(transform('{{tankstellen_list}}').replaceAll("'", '"'));
+
+    function addInfoBubble(map) {
+        let group = new H.map.Group();
+
+        map.addObject(group);
+
+        group.addEventListener('tap', function (evt) {
+            let bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
+                content: evt.target.getData()
+            });
+            ui.addBubble(bubble);
+        }, false);
+
+        for (t in tankstellen) {
+            let curr = tankstellen[t];
+            let url = "/tankstelle/" + t;
+            addMarkerToGroup(group, {lat: curr["coord"]["lat"], lng: curr["coord"]["lng"]},
+                "<div><a href=" + url + " target='_blank'>" + curr["name"] + "</a>");
+        }
+    }
+
+    function transform(str) {
+        return str.replace(/&#([0-9]{1,3});/gi, function (match, numStr) {
+            let num = parseInt(numStr, 10); // read num as normal number
+            return String.fromCharCode(num);
+        });
+    }
+
+    addInfoBubble(map)
+
+
+</script>
+</body>
+</html>
