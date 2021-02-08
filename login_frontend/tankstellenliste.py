@@ -111,6 +111,6 @@ def update_favorites(id, favorite_tankstellen):
     db.commit()
 
 
-@page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
-def tankstelle(tankstelle_id):
-    return "Coming soon!"
+# @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
+# def tankstelle(tankstelle_id):
+#     return "Coming soon!"

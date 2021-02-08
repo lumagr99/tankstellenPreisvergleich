@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tankstelle</title>
+</head>
+<body>
+    <h1>{{ tankstelle }}</h1>
+    <img src="{{ url_for('tankstelle.plot_png', tankstelle_id=tankstelle_id, datum=datum, display_e5_avg=e5_avg, display_e10_avg=e10_avg, display_diesel_avg=diesel_avg) }}">
+
+    <table name="Aktuell">
+        <tr>
+            <th>
+                Aktuelle Preise
+            </th>
+        </tr>
+        <tr>
+           <td>E5</td>
+           <td>{{ preis_e5 }}</td>
+        </tr>
+        <tr>
+            <td>E10</td>
+            <td>{{ preis_e10 }}</td>
+        </tr>
+        <tr>
+            <td>Diesel</td>
+            <td>{{ preis_diesel }}</td>
+        </tr>
+    </table>
+
+    <form action="" method="post" name="datum_select">
+        <input type="date" name="datum" required="required" value="{{ datum }}"/>
+        <input type="checkbox" id="e5_avg" name="e5_avg" {%if e5_avg %} checked {% endif %}/>
+        <label for="e5_avg">Duchchnitt E5</label>
+        <input type="checkbox" id="e10_avg" name="e10_avg" {%if e10_avg %} checked {% endif %}/>
+        <label for="e10_avg">Duchchnitt E10</label>
+        <input type="checkbox" id="diesel_avg" name="diesel_avg" {%if diesel_avg %} checked {% endif %}/>
+        <label for="diesel_avg">Duchchnitt Diesel</label>
+        <button type="submit" name="tag">Tag anzeigen</button>
+    </form>
+
+    <form method="post" name="favorit">
+        <input type="checkbox" id="favorit" name="favorit">
+        <label for="favorit">als Favorit hinzufügen: </label>
+        <button type="submit" name="favorit">bestätigen</button>
+    </form>
+
+</body>
+</html>
