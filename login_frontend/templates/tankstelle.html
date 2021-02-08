@@ -43,10 +43,12 @@
         <button type="submit" name="tag">Tag anzeigen</button>
     </form>
 
-    <form method="post" name="favorit">
-        <input type="checkbox" id="favorit" name="favorit">
-        <label for="favorit">als Favorit hinzufügen: </label>
-        <button type="submit" name="favorit">bestätigen</button>
-    </form>
+    {% if session['loggedin'] == True %}
+        <form method="post" name="favorit">
+            <input type="checkbox" id="favorit" name="favorit">
+            <label for="favorit">als Favorit hinzufügen: </label>
+            <button type="submit" name="favorit">bestätigen</button>
+        </form>
+    {% endif %}
 
 {% endblock %}

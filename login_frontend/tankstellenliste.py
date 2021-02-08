@@ -4,7 +4,6 @@ import json
 import mysql.connector
 from flask import Blueprint, render_template, session, request, redirect, url_for
 
-
 page = Blueprint('tankstellenliste', __name__, template_folder='templates')
 
 backend_url_prefix = "http://127.0.0.1:5000"
@@ -110,8 +109,3 @@ def update_favorites(id, favorite_tankstellen):
                            (id, item[:-9],))
     cursor.close()
     db.commit()
-
-
-# @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
-# def tankstelle(tankstelle_id):
-#     return "Coming soon!"

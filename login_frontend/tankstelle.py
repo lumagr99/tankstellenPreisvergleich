@@ -1,41 +1,32 @@
 import json
 import urllib
+
+import mysql
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from flask import Flask, render_template, Response, request, Blueprint
+from flask import Flask, render_template, Response, request, Blueprint, session
 import io
 import numpy as np
 from datetime import date, datetime, timedelta
-import matplotlib.ticker as plticker
 
 page = Blueprint('tankstelle', __name__, template_folder='templates')
 
-
+db = mysql.connector.connect(
+    host="45.88.109.79",
+    user="tankstellenCrawler",
+    password="qGD0zc5iKsvhyjwO",
+    database="tankdaten",
+    autocommit=True
+)
 
 backend_url_prefix = "http://localhost"
 
+tankstellen_id = ""
+
 # TODO Nur ganze Stunden auf der X-Achse
-
-
-"""Startseite mit der liste aller Tankstellen"""
-
-
-# @app.route("/")
-# def index():
-#     url = backend_url_prefix + ":5000/tankstellen"
-#     response = urllib.request.urlopen(url)
-#     data = json.loads(response.read())  # Alle Tankstellen aus Backend abfragen
-#     print(data["00060453-0001-4444-8888-acdc00000001"]["name"])
-#
-#     test_list = []
-#     for tanke in data:
-#         test_list.append(
-#             [data[tanke]["name"] + "-" + data[tanke]["place"], tanke])  # Alle Tankstellen in einer Liste speichern
-#
-#     return render_template('index.html', tankstellen=test_list)
 
 
 """Funktion zur Rückgabe der Preis daten einer Tankstelle"""
@@ -45,7 +36,6 @@ def get_preis_data(tankstellen_id, begin="2021-01-17%2000:00:00", end="2021-01-1
     url = "http://127.0.0.1:5000/preise?filter=id&begin=" + begin + "&end=" + end + "&interval=hourmin&id=" + tankstellen_id
     response = urllib.request.urlopen(url)
     preis_data = json.loads(response.read())
-    print(type(preis_data))
     return preis_data
 
 
@@ -58,7 +48,6 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
     end = datum + "%2023:59:59"  # beginn und ende des PReisverlaufs festlegen
 
     preis_data = get_preis_data(tankstelle_id, beginn, end)  # Preise abfragen
-    print(len(preis_data))
 
     if display_e5_avg == "True":
         display_e5_avg = True
@@ -151,7 +140,6 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
            title='Preisverlauf')  # Festlegen der Achsen beschriftung, Titel und position der Legende
     ax.legend(loc='upper left')
 
-    print(t)
     X_TICKS = 4
     plt.xticks(range(0, len(t), X_TICKS), t[::X_TICKS], rotation=(45),
                fontsize=(10))  # nur jeden vierten wert aus t benutzen (volle Stunden)
@@ -165,8 +153,8 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
 
 @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
+    tankstellen_id = tankstelle_id
     url = backend_url_prefix + ":5000/tankstellen?id=" + tankstelle_id
-    print("URL", url)
     response = urllib.request.urlopen(url)  # Abfragen der Tankstellendaten aus dem Backend
     tankstellen_data = json.loads(response.read())
 
@@ -180,19 +168,21 @@ def tankstelle(tankstelle_id):
     beginn = str(now.date()) + "%20" + str((now - fifteen_minutes).time())[0:8]
 
     preise = get_preis_data(tankstelle_id, beginn, end)
-    print(preise)
     for zeit in preise:
         preis_e5 = (preise[zeit][tankstelle_id]["e5"]["price"])
         preis_e10 = (preise[zeit][tankstelle_id]["e10"]["price"])
         preis_diesel = (preise[zeit][tankstelle_id]["diesel"]["price"])
 
+    datum = ""
+
     if request.method == "GET":
         datum = date.today()  # Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
         return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
                                tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg, e10_avg=display_e10_avg,
-                               diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10, preis_diesel=preis_diesel)
+                               diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
+                               preis_diesel=preis_diesel)
     else:
-        if 'tag' in request.form:                             # Fall: es soll ein bestimmter Tag angezeigt werden
+        if 'tag' in request.form:  # Fall: es soll ein bestimmter Tag angezeigt werden
             if request.form.get("e5_avg") == "on":
                 display_e5_avg = True
             if request.form.get("e10_avg"):
@@ -201,12 +191,25 @@ def tankstelle(tankstelle_id):
                 display_diesel_avg = True
             datum = request.form.get("datum")
             return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
-                                   tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg, e10_avg=display_e10_avg,
-                                   diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10, preis_diesel=preis_diesel)
-        else:
-            #TODO TAnkstelle zu den Favorieten hinzufügen
-            print("test")
+                                   tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg,
+                                   e10_avg=display_e10_avg,
+                                   diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
+                                   preis_diesel=preis_diesel)
+        if 'favorit' in request.form:  # Fall: Favoriten Status änderung angefragt
+            print(request.form.get("favorit"))
+            fav = request.form.get("favorit")
+            id = session.get('id')
+            cursor = db.cursor()
+            cursor.execute('DELETE FROM Benutzer2Tankstelle where BenutzerID = %s AND TankstellenID = %s;',
+                           (id, tankstellen_id,))
+            if fav == "on":
+                cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
+                               (id, tankstellen_id,))
+            cursor.close()
 
-
-# if __name__ == "__main__":
-#     app.run(port=int(8080), debug=True)  # App auf port 8080 staren
+            # TODO wie soll das gehen?
+            return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
+                                   tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg,
+                                   e10_avg=display_e10_avg,
+                                   diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
+                                   preis_diesel=preis_diesel)
