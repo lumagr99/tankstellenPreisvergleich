@@ -30,3 +30,12 @@ img{
 html, body, .full{
     height: 90%;
 }
+
+div.content{
+    height: 90%
+}
+
+img{
+    height: 480px
+    width: 640px
+}
