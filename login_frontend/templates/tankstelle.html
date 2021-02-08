@@ -45,7 +45,11 @@
 
     {% if session['loggedin'] == True %}
         <form method="post" name="favorit">
-            <input type="checkbox" id="favorit" name="favorit">
+            {% if markedFav == True %}
+                <input type="checkbox" checked id="favorit" name="favorit">
+            {% else %}
+                <input type="checkbox" id="favorit" name="favorit">
+            {% endif %}
             <label for="favorit">Favorit </label>
             <button type="submit" name="favorit">bBestätigen</button>
         </form>

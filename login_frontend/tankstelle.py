@@ -207,6 +207,8 @@ def tankstelle(tankstelle_id):
                                (id, tankstellen_id,))
             cursor.close()
 
+            # TODO render template paremter markedFav einführen. Gibt an ob eine Tankstelle Favorit ist oder nicht.
+
             # TODO wie soll das gehen?
             return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
                                    tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg,
