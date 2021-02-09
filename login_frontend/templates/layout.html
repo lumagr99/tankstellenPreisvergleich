@@ -13,7 +13,7 @@
     <div id="links">{% block links %}
         <div class="links">
         <title>FahrHeiter SWF</title>
-        <img src="{{url_for('static', filename='logo.png')}}" alt="Fahr Heiter Logo."/>
+        <img class="logo" src="{{url_for('static', filename='logo.png')}}" alt="Fahr Heiter Logo."/>
         <a class="block" href="{{ url_for('start')}}" class="active">Start</a>
         <a class="block" href="{{ url_for('tankstellenliste.show')}}" class="active">Tankstellen</a>
         {% if session['loggedin'] == True %}
@@ -26,6 +26,7 @@
         </div>
     </div>
     {% endblock %}
-    <p id="content" class="content">{% block content %}{%endblock%}</p>
+    <div class="content">{% block content %}
+        {%endblock%}</div>
 </body>
 </html>

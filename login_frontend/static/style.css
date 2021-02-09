@@ -8,7 +8,7 @@
     justify-content: center;
 }
 
-img{
+.logo{
     flex-grow: 1;
     order: 1;
     min-width: 10%;
@@ -32,10 +32,25 @@ html, body, .full{
 }
 
 div.content{
-    height: 90%
+    height: 90%;
 }
 
-img{
-    height: 480px
-    width: 640px
+.plot {
+     min-width: 50%;
+     max-width: 90%
+    height: auto;
+}
+
+form {
+    border-style: solid;
+    margin: 10px
+}
+
+table {
+  border-collapse: collapse;
+  width 100%;
+}
+
+tr {
+  border: 1pt solid black;
 }

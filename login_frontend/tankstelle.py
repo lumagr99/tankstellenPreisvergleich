@@ -97,6 +97,8 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
     for zeit in zeiten:
         t.append(str(float(zeit.split(":")[0]) + float(zeit.split(":")[1]) / 60))
     t.sort(key=float)
+
+
     p_e5 = np.array(preis_e5)  # Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)

@@ -10,7 +10,7 @@
 
 {%block content %}
     <h1>{{ tankstelle }}</h1>
-    <div class="plot"><img src="{{ url_for('tankstelle.plot_png', tankstelle_id=tankstelle_id, datum=datum, display_e5_avg=e5_avg, display_e10_avg=e10_avg, display_diesel_avg=diesel_avg) }}"></div>
+    <img class="plot" src="{{ url_for('tankstelle.plot_png', tankstelle_id=tankstelle_id, datum=datum, display_e5_avg=e5_avg, display_e10_avg=e10_avg, display_diesel_avg=diesel_avg) }}">
 
     <table name="Aktuell">
         <tr>
@@ -44,14 +44,14 @@
     </form>
 
     {% if session['loggedin'] == True %}
-        <form method="post" name="favorit">
+        <form method="post" name="favorit" class="favorit">
             {% if markedFav == True %}
                 <input type="checkbox" checked id="favorit" name="favorit">
             {% else %}
                 <input type="checkbox" id="favorit" name="favorit">
             {% endif %}
             <label for="favorit">Favorit </label>
-            <button type="submit" name="favorit">bBestätigen</button>
+            <button type="submit" name="favorit">Bestätigen</button>
         </form>
     {% endif %}
 
