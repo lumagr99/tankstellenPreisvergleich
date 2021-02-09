@@ -98,7 +98,6 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
         t.append(str(float(zeit.split(":")[0]) + float(zeit.split(":")[1]) / 60))
     t.sort(key=float)
 
-
     p_e5 = np.array(preis_e5)  # Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)
@@ -150,6 +149,49 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
     return fig
 
 
+Tankstelle = ""
+tankstellen_id = ""
+Datum = ""
+e5_avg = False
+e10_avg = False
+diesel_avg = False
+preis_e5 = 0
+preis_e10 = 0
+preis_diesel = 0
+markedFav = False
+
+
+def defreturn(Tanstelle_new=Tankstelle, tankstellen_id_new=tankstellen_id, datum_new=Datum, e5_avg_new=e5_avg,
+              e10_avg_new=e10_avg,
+              diesel_avg_new=diesel_avg, preis_e5_new=preis_e5, preis_e10_new=preis_e10, preis_diesel_new=preis_diesel,
+              markedFav_new=markedFav):
+    global Tankstelle
+    Tankstelle = Tanstelle_new
+    global tankstellen_id
+    tankstellen_id = tankstellen_id_new
+    global Datum
+    Datum = datum_new
+    global e5_avg
+    e5_avg = e5_avg_new
+    global e10_avg
+    e10_avg = e10_avg_new
+    global diesel_avg
+    diesel_avg = diesel_avg_new
+    global preis_e5
+    preis_e5 = preis_e5_new
+    global preis_e10
+    preis_e10 = preis_e10_new
+    global preis_diesel
+    preis_diesel = preis_diesel_new
+    global markedFav
+    markedFav = markedFav_new
+
+    return render_template("tankstelle.html", tankstelle=Tankstelle,
+                           tankstelle_id=tankstellen_id, datum=Datum, e5_avg=e5_avg, e10_avg=e10_avg,
+                           diesel_avg=diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
+                           preis_diesel=preis_diesel, markedFav=markedFav)
+
+
 """seite mit Der Preisentwicklung einer Tankstelle"""
 
 
@@ -159,6 +201,8 @@ def tankstelle(tankstelle_id):
     url = backend_url_prefix + ":5000/tankstellen?id=" + tankstelle_id
     response = urllib.request.urlopen(url)  # Abfragen der Tankstellendaten aus dem Backend
     tankstellen_data = json.loads(response.read())
+
+    tankstelle = tankstellen_data[tankstellen_id]["name"]
 
     display_e5_avg = False
     display_e10_avg = False
@@ -179,10 +223,7 @@ def tankstelle(tankstelle_id):
 
     if request.method == "GET":
         datum = date.today()  # Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
-        return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
-                               tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg, e10_avg=display_e10_avg,
-                               diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                               preis_diesel=preis_diesel)
+        #return defreturn(datum_new=datum, Tanstelle_new=tankstelle, tankstellen_id_new=tankstellen_id)
     else:
         if 'tag' in request.form:  # Fall: es soll ein bestimmter Tag angezeigt werden
             if request.form.get("e5_avg") == "on":
@@ -192,11 +233,9 @@ def tankstelle(tankstelle_id):
             if request.form.get("diesel_avg"):
                 display_diesel_avg = True
             datum = request.form.get("datum")
-            return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
-                                   tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg,
-                                   e10_avg=display_e10_avg,
-                                   diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   preis_diesel=preis_diesel)
+            #return defreturn(datum_new=datum, Tanstelle_new=tankstelle, tankstellen_id_new=tankstellen_id,
+                             #e5_avg_new=display_e5_avg, e10_avg_new=display_e10_avg, diesel_avg_new=display_diesel_avg)
+
         if 'favorit' in request.form:  # Fall: Favoriten Status änderung angefragt
             print(request.form.get("favorit"))
             fav = request.form.get("favorit")
@@ -212,8 +251,4 @@ def tankstelle(tankstelle_id):
             # TODO render template paremter markedFav einführen. Gibt an ob eine Tankstelle Favorit ist oder nicht.
 
             # TODO wie soll das gehen?
-            return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
-                                   tankstelle_id=tankstelle_id, datum=datum, e5_avg=display_e5_avg,
-                                   e10_avg=display_e10_avg,
-                                   diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   preis_diesel=preis_diesel)
+    return defreturn(Tanstelle_new=tankstelle, tankstellen_id_new=tankstellen_id, datum_new=Datum, e5_avg_new=_avg)
