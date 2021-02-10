@@ -176,7 +176,7 @@ def tankstelle(tankstelle_id):
         preis_diesel = (preise[zeit][tankstelle_id]["diesel"]["price"])
 
     datum = ""
-
+    #TODO Favoriten überprüfen
     if request.method == "GET":
         datum = date.today()  # Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
         return render_template("tankstelle.html", tankstelle=tankstellen_data[tankstelle_id]["name"],
