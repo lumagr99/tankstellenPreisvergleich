@@ -7,11 +7,11 @@ from login_frontend import tankstellenliste, karte, tankstelle
 import mysql.connector
 
 db = mysql.connector.connect(
-                host="45.88.109.79",
-                user="tankstellenCrawler",
-                password="qGD0zc5iKsvhyjwO",
-                database="tankdaten"
-            )
+    host="45.88.109.79",
+    user="tankstellenCrawler",
+    password="qGD0zc5iKsvhyjwO",
+    database="tankdaten"
+)
 db.ping(True)
 app = Flask(__name__)
 
@@ -19,7 +19,6 @@ app.register_blueprint(tankstellenliste.page)
 app.register_blueprint(karte.page)
 app.register_blueprint(tankstelle.page)
 app.secret_key = 'FlaskLoginTest'
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -40,14 +39,15 @@ def login():
             return redirect(url_for('tankstellenliste.show'))
         else:
             msg = 'Ups, das war wohl nichts!'
-    return render_template('index.html', msg=msg)
+    return render_template('login.html', msg=msg)
+
 
 @app.route('/logout', methods=['GET'])
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('benutzername', None)
-    return redirect(url_for('login'))
+    return redirect(url_for('start'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -99,16 +99,6 @@ def hash_sha256(text_string):
     text_string = hashlib.sha256(text_string.encode()).hexdigest()
     return text_string
 
-
-# http://localhost:5000/pythinlogin/home - this will be the home page, only accessible for loggedin users
-@app.route('/pythonlogin/home')
-def home():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-        # User is loggedin show them the home page
-        return render_template('home.html', username=session['benutzername'])
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
 
 @app.route('/')
 def start():
