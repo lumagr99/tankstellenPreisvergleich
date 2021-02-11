@@ -11,10 +11,6 @@
 	{% block content %}
 		<div class="register">
 			<h1>Register</h1>
-			<div class="links">
-				<a href="{{ url_for('login') }}" class="active">Login</a>
-				<a href="{{ url_for('register') }}" class="active">Register</a>
-			</div>
 			<form action="{{ url_for('register') }}" method="post" autocomplete="off" class="login_form">
 				<label for="username">
 					<i class="fas fa-user"></i>
