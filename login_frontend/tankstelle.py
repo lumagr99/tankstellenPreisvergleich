@@ -39,7 +39,6 @@ def get_preis_data(tankstellen_id, begin="2021-01-17%2000:00:00", end="2021-01-1
 
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
 
-
 @page.route("/plot_png/<tankstelle_id>/<datum>/<display_e5_avg>/<display_e10_avg>/<display_diesel_avg>")
 def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_diesel_avg):
     beginn = datum + "%2000:00:00"
