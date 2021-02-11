@@ -13,17 +13,17 @@
 
 <script>
     // Here initialisieren
-    var platform = new H.service.Platform({
+    let platform = new H.service.Platform({
         'apikey': '_gWQjrbfaaOg4bBFujXoVO35IsD6YwovSG1vYZy7o8w'
     });
     //Ausgangsposition
     const lat = 51.3765;
     const long = 7.6960;
 
-    var maptypes = platform.createDefaultLayers();
+    let maptypes = platform.createDefaultLayers();
 
     // Init der Map
-    var map = new H.Map(
+    let map = new H.Map(
         document.getElementById('mapContainer'),
         maptypes.raster.terrain.map,
         {
@@ -32,13 +32,13 @@
         });
 
     // Events aktivieren
-    var mapEvents = new H.mapevents.MapEvents(map);
+    let mapEvents = new H.mapevents.MapEvents(map);
 
     // Instantiate the default behavior, providing the mapEvents object:
-    var behavior = new H.mapevents.Behavior(mapEvents);
+    let behavior = new H.mapevents.Behavior(mapEvents);
 
     // UI erstellen
-    var ui = H.ui.UI.createDefault(map, maptypes);
+    let ui = H.ui.UI.createDefault(map, maptypes);
 
     let svg = new H.map.Icon("{{url_for('static', filename='marker.png')}}", {size:{w: 50, h:65}});
     console.log(svg)
