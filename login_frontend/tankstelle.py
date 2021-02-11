@@ -196,13 +196,13 @@ def tankstelle(tankstelle_id):
             if request.form.get("diesel_avg"):
                 display_diesel_avg = True
             datum = request.form.get("datum")
-            return render_template("tankstelle.html", tankstelle=tankstelle,
-                                   tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
-                                   e10_avg=display_e10_avg,
-                                   diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
+            #return render_template("tankstelle.html", tankstelle=tankstelle,
+                                   #tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
+                                   #e10_avg=display_e10_avg,
+                                   #diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
+                                   #preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
 
-        if 'favorit' in request.form:  # Fall: Favoriten Status änderung angefragt
+          # Fall: Favoriten Status änderung angefragt
             fav = request.form.get("favorit")
             id = session.get('id')
             cursor = db.cursor()
