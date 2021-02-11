@@ -12,7 +12,7 @@ db = mysql.connector.connect(
                 password="qGD0zc5iKsvhyjwO",
                 database="tankdaten"
             )
-
+db.ping(True)
 app = Flask(__name__)
 
 app.register_blueprint(tankstellenliste.page)

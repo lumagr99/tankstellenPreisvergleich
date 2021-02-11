@@ -21,6 +21,7 @@ db = mysql.connector.connect(
     database="tankdaten",
     autocommit=True
 )
+db.ping(True)
 
 backend_url_prefix = "http://localhost"
 

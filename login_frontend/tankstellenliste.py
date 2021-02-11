@@ -15,6 +15,7 @@ db = mysql.connector.connect(
     database="tankdaten",
     autocommit=True
 )
+db.ping(True)
 
 """Zeigt eine Übersicht über alle Tankstellen.
 Ermöglicht das zuordnen von Favoriten."""
