@@ -135,7 +135,7 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
         p_diesel_avg = np.array(preise_diesel_avg)
         ax.plot(t, p_diesel_avg, label="Diesel Duchschnitt", linestyle=(0, (5, 2)), color="green")
 
-    ax.set(xlabel='zeit (h)', ylabel='preis (€)',
+    ax.set(xlabel='Zeit (h)', ylabel='Preis (€)',
            title='Preisverlauf')  # Festlegen der Achsen beschriftung, Titel und position der Legende
     ax.legend(loc='upper left')
 
