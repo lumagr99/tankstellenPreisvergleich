@@ -17,6 +17,7 @@ db = mysql.connector.connect(
     autocommit=True
 )
 
+#Verhindert den Disconnect
 db.ping(True)
 
 
@@ -30,7 +31,6 @@ end=[endZeitpunkt, default currentTimestamp]
 interval=[days/hours/weekdays/hourmin, gibt Monatstage, Stunden, Wochentage oder Stunden:Minuten genaue Preisstatistik, nur bei filter=[all/id]]
 id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
 
-#Return: JSON mit den angeforderten Daten
 @app.route('/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
@@ -59,13 +59,14 @@ id = [tankstellenID, nur wenn nach ID gefiltert werden soll!"""
 
 @app.route('/tankstellen')
 def tankstellen():
-    t_id = request.args.get('id', default="0", type=str)
+    tankstellenid = request.args.get('id', default="0", type=str)
 
     query = "select id, name, place, street, housenumber, lat, lng from Tankstellen %s;"
-    if t_id != "0":
-        query = query.replace("%s", "where id = '" + t_id + "'")
+    if tankstellenid != "0":
+        query = query.replace("%s", "where id = '" + tankstellenid + "'")
     else:
         query = query.replace("%s", "")
+
     #SQL Datenbank ansprechen
     cursor = db.cursor()
     cursor.execute(query)
@@ -73,6 +74,7 @@ def tankstellen():
     cursor.close()
 
     ret = {}
+
     #In JSON umbauen
     for c in data:
         if c[0] not in ret:
@@ -127,12 +129,14 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         query = query.replace("%id", "")
     else:
         query = query.replace("%id", " id='" + id + "' and")
+
     #Datenbank ansprechen
     cursor = db.cursor()
     cursor.execute(query)
     res = cursor.fetchall()
 
     ret = {}
+
     #in JSON umbauen
     for r in res:
         x = r[4]
@@ -170,11 +174,11 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
     query = "SELECT round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, " + \
             "CONCAT(HOUR(timedate), ':',MINUTE(timedate)) as hours FROM `Preise` where timedate between '" + begin + \
             "' and '" + end + "' group by hours order by timedate;"
-    print(query)
     cursor.execute(query)
     res = cursor.fetchall()
     cursor.close()
 
+    #Einfügen in rückgabe Liste
     for r in res:
         x = r[3]
         ret[x]["AVG"] = {
