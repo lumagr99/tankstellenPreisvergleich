@@ -4,7 +4,10 @@
 	{% block head %}
     	{{ super() }}
 	{% endblock %}
-	<body>
+
+	{% block links %}
+	{% endblock %}
+	{% block content %}
 		<div class="register">
 			<h1>Register</h1>
 			<div class="links">
@@ -24,5 +27,5 @@
 				<input type="submit" value="Register">
 			</form>
 		</div>
-	</body>
+	{% endblock %}
 </html>
