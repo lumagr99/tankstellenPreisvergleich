@@ -86,15 +86,15 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
     return Response(output.getvalue(), mimetype='image/png')  # URL für Graph(png) zuruckgeben
 
 
-"""Funktion zu erstellung eines Plots"""
+"""Funktion zu erstellung eines Plots aus den gegebenen daten einer Tankstelle"""
 
 
 def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg,
                   display_e5_avg, display_e10_avg, display_diesel_avg):
-    t = []
+    zeiten_achse = []
     for zeit in zeiten:
-        t.append(str(float(zeit.split(":")[0]) + float(zeit.split(":")[1]) / 60))
-    t.sort(key=float)
+        zeiten_achse.append(str(float(zeit.split(":")[0]) + float(zeit.split(":")[1]) / 60))
+    zeiten_achse.sort(key=float)
 
     p_e5 = np.array(preis_e5)  # Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
@@ -107,40 +107,40 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
         if preis == 0:
             zero_count += 1
     if zero_count != len(p_e5):
-        ax.plot(t, p_e5, label="E5", color="blue")
+        ax.plot(zeiten_achse, p_e5, label="E5", color="blue")
 
     zero_count = 0
     for preis in p_e10:
         if preis == 0:  # Überprüfen, ob der preis einer Sorte duchgänig 0 ist, sonst Plotten der Sortenpreise
             zero_count += 1
     if zero_count != len(p_e10):
-        ax.plot(t, p_e10, label="E10", color="red")
+        ax.plot(zeiten_achse, p_e10, label="E10", color="red")
 
     zero_count = 0
     for preis in p_diesel:
         if preis == 0:
             zero_count += 1
     if zero_count != len(p_diesel):
-        ax.plot(t, p_diesel, label="Diesel", color="green")
+        ax.plot(zeiten_achse, p_diesel, label="Diesel", color="green")
 
     if display_e5_avg:
         p_e5_avg = np.array(preise_e5_avg)
-        ax.plot(t, p_e5_avg, label="E5 Duchschnitt", linestyle=(0, (5, 2)), color="blue")
+        ax.plot(zeiten_achse, p_e5_avg, label="E5 Duchschnitt", linestyle=(0, (5, 2)), color="blue")
 
     if display_e10_avg:
         p_e10_avg = np.array(preise_e10_avg)
-        ax.plot(t, p_e10_avg, label="E10 Duchschnitt", linestyle=(0, (5, 2)), color="red")
+        ax.plot(zeiten_achse, p_e10_avg, label="E10 Duchschnitt", linestyle=(0, (5, 2)), color="red")
 
     if display_diesel_avg:
         p_diesel_avg = np.array(preise_diesel_avg)
-        ax.plot(t, p_diesel_avg, label="Diesel Duchschnitt", linestyle=(0, (5, 2)), color="green")
+        ax.plot(zeiten_achse, p_diesel_avg, label="Diesel Duchschnitt", linestyle=(0, (5, 2)), color="green")
 
     ax.set(xlabel='Zeit (h)', ylabel='Preis (€)',
            title='Preisverlauf')  # Festlegen der Achsen beschriftung, Titel und position der Legende
     ax.legend(loc='upper left')
 
     X_TICKS = 4
-    plt.xticks(range(0, len(t), X_TICKS), t[::X_TICKS], rotation=(45),
+    plt.xticks(range(0, len(zeiten_achse), X_TICKS), zeiten_achse[::X_TICKS], rotation=(45),
                fontsize=(10))  # nur jeden vierten wert aus t benutzen (volle Stunden)
 
     ax.grid()
@@ -196,11 +196,7 @@ def tankstelle(tankstelle_id):
             if request.form.get("diesel_avg"):
                 display_diesel_avg = True
             datum = request.form.get("datum")
-            #return render_template("tankstelle.html", tankstelle=tankstelle,
-                                   #tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
-                                   #e10_avg=display_e10_avg,
-                                   #diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   #preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
+
 
           # Fall: Favoriten Status änderung angefragt
             fav = request.form.get("favorit")
@@ -212,7 +208,7 @@ def tankstelle(tankstelle_id):
                 cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
                                (id, tankstellen_id,))
             cursor.close()
-            print(tankstellen_id)
+            
             return render_template("tankstelle.html", tankstelle=tankstelle,
                                    tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
                                    e10_avg=display_e10_avg,
