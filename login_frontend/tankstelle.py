@@ -221,6 +221,9 @@ def tankstelle(tankstelle_id):
                                    preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
 
 
+"""Fragt ab ob ein Benutzer eine bestimmte Tankstelle favorisiert hat."""
+
+
 def isFavorite(benutzerID, tankstellenid):
     if benutzerID != "" and tankstellenid != "":
         cursor = db.cursor()
