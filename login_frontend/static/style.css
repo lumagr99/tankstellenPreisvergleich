@@ -28,8 +28,10 @@
 }
 
 html, body, .full{
-    height: 90%;
+    height: 100%;
     background-color: rgb(66, 108, 245);
+    background-position: center;
+    background-size: cover;
 }
 
 div.content{
