@@ -9,7 +9,7 @@ URL: ./preise<br>
   - end = [yyyy-mm-dd hh:mm:ss] - Enddatum der Datenauswahl<br>
   - id = [TankstellenID]<br>
   - filter=[all/durchschnitt/id]<br>
-   - all: Zeigt alle Tankstellen -> 
+    - all: Zeigt alle Tankstellen -> 
     - interval = [days/hours/weekdays/hourmin]<br>
    - durchschnitt: Zeigt den Durchschnitt der Preise -> 
      interval = [days/hours/weekdays]<br>
