@@ -1,12 +1,13 @@
 import json
 import urllib
 
-from flask import Blueprint, render_template, session
+from flask import Blueprint, render_template
 
 page = Blueprint('karte', __name__, template_folder='templates')
 
 backend_url_prefix = "http://127.0.0.1:5000"
 
+"""Generiert die anzuzeigenden Tankstellen und leitet an die Anzeigende html weiter."""
 
 @page.route('/karte')
 def show_map():
