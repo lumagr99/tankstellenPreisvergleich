@@ -23,34 +23,81 @@
 }
 
 .map{
-    min-width: 90%;
+    width: 100%;
     height: 100%;
 }
 
 html, body, .full{
     height: 90%;
+    background-color: rgb(66, 108, 245);
 }
 
 div.content{
     height: 90%;
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .plot {
-     min-width: 50%;
-     max-width: 90%
-    height: auto;
+     width: 49%;
+     height: auto;
+     margin-left: 0px;
 }
 
-form {
-    border-style: solid;
-    margin: 10px
-}
 
 table {
   border-collapse: collapse;
-  width 100%;
+  width: 100%;
 }
 
 tr {
   border: 1pt solid black;
+}
+
+th {
+   border: 1pt solid black;
+}
+
+tbody {
+   width: 100%;
+}
+
+.plot  {
+    float: left;
+    display: inline;
+    width: 49%;
+    margin: 10px;
+}
+
+.aktuell {
+    table-layout: auto;
+    float: left;
+    display: inline;
+    width: 45%;
+    margin: 10px;
+}
+
+.datum_select, .favorit {
+    display: inline;
+    border-style: solid;
+    margin: 10px;
+    width: 49%;
+    height: 50%;
+}
+
+h2 {
+    text-align: center;
+}
+
+.login_form{
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+.active {
+    margin: 10px;
+    text-align: center;
 }
