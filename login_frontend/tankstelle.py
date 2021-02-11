@@ -26,9 +26,6 @@ backend_url_prefix = "http://localhost"
 
 tankstellen_id = ""
 
-# TODO Nur ganze Stunden auf der X-Achse
-
-
 """Funktion zur Rückgabe der Preis daten einer Tankstelle"""
 
 
@@ -149,8 +146,6 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
     return fig
 
 
-
-
 """seite mit Der Preisentwicklung einer Tankstelle"""
 
 
@@ -179,13 +174,18 @@ def tankstelle(tankstelle_id):
         preis_diesel = (preise[zeit][tankstelle_id]["diesel"]["price"])
 
     datum = ""
-    #TODO Favoriten überprüfen
+    id = ""
+    if 'loggedin' in session:
+        id = session.get('id')
+
+    # TODO Favoriten überprüfen
     if request.method == "GET":
         datum = date.today()  # Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
         return render_template("tankstelle.html", tankstelle=tankstelle,
-                               tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg, e10_avg=display_e10_avg,
+                               tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
+                               e10_avg=display_e10_avg,
                                diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                               preis_diesel=preis_diesel)
+                               preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
     else:
         if 'tag' in request.form:  # Fall: es soll ein bestimmter Tag angezeigt werden
             if request.form.get("e5_avg") == "on":
@@ -199,25 +199,33 @@ def tankstelle(tankstelle_id):
                                    tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
                                    e10_avg=display_e10_avg,
                                    diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   preis_diesel=preis_diesel)
+                                   preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
 
         if 'favorit' in request.form:  # Fall: Favoriten Status änderung angefragt
-            print(request.form.get("favorit"))
             fav = request.form.get("favorit")
             id = session.get('id')
             cursor = db.cursor()
             cursor.execute('DELETE FROM Benutzer2Tankstelle where BenutzerID = %s AND TankstellenID = %s;',
                            (id, tankstellen_id,))
             if fav == "on":
+                print("on")
                 cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
                                (id, tankstellen_id,))
             cursor.close()
-
-            # TODO render template paremter markedFav einführen. Gibt an ob eine Tankstelle Favorit ist oder nicht.
-
-            # TODO wie soll das gehen?
+            print(tankstellen_id)
             return render_template("tankstelle.html", tankstelle=tankstelle,
                                    tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
                                    e10_avg=display_e10_avg,
                                    diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   preis_diesel=preis_diesel)
+                                   preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
+
+
+def isFavorite(benutzerID, tankstellenid):
+    if benutzerID != "" and tankstellenid != "":
+        cursor = db.cursor()
+        cursor.execute("SELECT tankstellenID FROM Benutzer2Tankstelle WHERE benutzerID=%s and tankstellenID = %s;",
+                       (benutzerID, tankstellenid,))
+        if len(cursor.fetchall()) == 1:
+            return True
+        cursor.close()
+    return False
