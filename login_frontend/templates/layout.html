@@ -30,4 +30,10 @@
         {%endblock%}
     </div>
 </body>
+
+<footer>
+    {% block footer %}
+        <a class="about" href="{{ url_for('about') }}">About</a>
+    {% endblock %}
+</footer>
 </html>

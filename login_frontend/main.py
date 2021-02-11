@@ -116,4 +116,9 @@ def start():
     return render_template('start.html')
 
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
 app.run(port=int(8080), debug=True)

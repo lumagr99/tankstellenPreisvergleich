@@ -1,6 +1,15 @@
-<html>
-<head>
-    <meta name="viewport" content="initial-scale=1.0, width=device-width" charset="UTF-8"/>
+
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block links %}
+    {{ super () }}
+{% endblock %}
+
+{% block content %}
+
 	<center><h1>Wir bedanken uns bei: </h1>
 	<font size="5"><p> Bei <a href="https://www.tankerkoenig.de/">Tankerkönig</a> für die Bereitstellung der Daten</p></font><br>
 	<h1>Unser Dank gilt ebenfalls: </h1>
@@ -8,6 +17,6 @@
 	<font size="5"><p><a href="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Simpleicons_Places_map-marker-point.svg/485px-Simpleicons_Places_map-marker-point.svg.png">Wikimedia</a></p></font>
 	<font size="5"><p><a href="https://pixabay.com/de/vectors/hase-cliparts-ausgabe-schnell-icon-1298864/">OpenClipart-Vectors</a></p></font>
 	</center>
-	
-</head>
-</html>
+
+{% endblock %}
+
