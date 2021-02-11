@@ -15,6 +15,6 @@ Das Projekt entstand im Rahmen einer Ausarbeitung an der Fachhochschule Südwest
       - interval = [days/hours/weekdays]<br>
     - id: Zeigt eine Tankstelle, ID Parameter muss angegeben werden!<br>
 
-URL: ./tankstellen<br>
+2. URL: ./tankstellen<br>
   - URL-Parameter:<br>
     - id = [TankstellenID] - Zeigt generelle Informationen wie Adresse von einer Tankstelle an. Wenn kein Parameter angegeben wird, anzeige für alle Tankstellen.
