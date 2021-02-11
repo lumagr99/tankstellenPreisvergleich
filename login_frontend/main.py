@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import MySQLdb.cursors
 import hashlib
-import string, random
+import string
+import random
 
 from login_frontend import tankstellenliste, karte, tankstelle
 import mysql.connector
@@ -19,6 +19,8 @@ app.register_blueprint(tankstellenliste.page)
 app.register_blueprint(karte.page)
 app.register_blueprint(tankstelle.page)
 app.secret_key = 'FlaskLoginTest'
+
+"""Verwaltet den Login eines Benutzers."""
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -42,12 +44,18 @@ def login():
     return render_template('login.html', msg=msg)
 
 
+"""Verwaltet den Logout eines Benutzers."""
+
+
 @app.route('/logout', methods=['GET'])
 def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('benutzername', None)
     return redirect(url_for('start'))
+
+
+"""Verwaltet die Registrierung eines neuen Benutzers."""
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -98,6 +106,9 @@ def createAccount(benutzername, password):
 def hash_sha256(text_string):
     text_string = hashlib.sha256(text_string.encode()).hexdigest()
     return text_string
+
+
+"""Definiert die Startseite"""
 
 
 @app.route('/')
