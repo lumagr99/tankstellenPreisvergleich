@@ -4,8 +4,8 @@ Das Projekt entstand im Rahmen einer Ausarbeitung an der Fachhochschule Südwest
 
 ## Backend API
 URL: ./preise<br>
--Optionale URL-Parameter:<br>
-  -begin = [yyyy-mm-dd hh:mm:ss] - Startdartum der Datenauswahl<br>*
+- Optionale URL-Parameter:<br>
+  - begin = [yyyy-mm-dd hh:mm:ss] - Startdartum der Datenauswahl<br>*
         end = [yyyy-mm-dd hh:mm:ss] - Enddatum der Datenauswahl<br>
         id = [TankstellenID]<br>
         filter=[all/durchschnitt/id]<br>
