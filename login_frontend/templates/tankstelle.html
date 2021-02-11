@@ -40,7 +40,7 @@
         <label for="e10_avg">Durchschnitt E10</label>
         <input type="checkbox" id="diesel_avg" name="diesel_avg" {%if diesel_avg %} checked {% endif %}/>
         <label for="diesel_avg">Durchschnitt Diesel</label>
-        <input type="checkbox" checked id="favorit" name="favorit" {% if session['loggedin'] == True %} checked {% endif %}>
+        <input type="checkbox" id="favorit" name="favorit" {% if markedFav %} checked {% endif %}>
         <label for="favorit">Favorit </label>
         <button type="submit" name="tag">Bestätigen</button>
     </form>
