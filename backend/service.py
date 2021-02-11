@@ -17,6 +17,8 @@ db = mysql.connector.connect(
     autocommit=True
 )
 
+db.ping(True)
+
 
 print("service")
 
