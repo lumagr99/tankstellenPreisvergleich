@@ -91,7 +91,7 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
         preise_e10.append(zeit[2])
         preise_diesel.append(zeit[3])
 
-    #Wenn notwendig durchschnittspreise zuordnen
+    # Wenn notwendig durchschnittspreise zuordnen
     if display_e5_avg or display_e10_avg or display_diesel_avg:
         avg_data = get_preis_avg(begin, end)
         for zeit in avg_data:
@@ -200,10 +200,9 @@ def tankstelle(tankstelle_id):
         preis_e10 = zeit[2]
         preis_diesel = zeit[3]
 
-    datum = ""
-    id = ""
+    benutzerid = ""
     if 'loggedin' in session:
-        id = session.get('id')
+        benutzerid = session.get('id')
 
     if request.method == "GET":
         # TODO wird das noch benötigt?
@@ -212,7 +211,7 @@ def tankstelle(tankstelle_id):
                                tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
                                e10_avg=display_e10_avg,
                                diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                               preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
+                               preis_diesel=preis_diesel, markedFav=isFavorite(benutzerid, tankstellen_id))
     else:
         if 'tag' in request.form:  # Fall: es soll ein bestimmter Tag angezeigt werden
             if request.form.get("e5_avg") == "on":
@@ -225,30 +224,30 @@ def tankstelle(tankstelle_id):
 
             # Fall: Favoriten Status änderung angefragt
             fav = request.form.get("favorit")
-            id = session.get('id')
+            benutzerid = session.get('id')
             cursor = db.cursor()
             cursor.execute('DELETE FROM Benutzer2Tankstelle where BenutzerID = %s AND TankstellenID = %s;',
-                           (id, tankstellen_id,))
+                           (benutzerid, tankstellen_id,))
             if fav == "on":
                 cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
-                               (id, tankstellen_id,))
+                               (benutzerid, tankstellen_id,))
             cursor.close()
 
             return render_template("tankstelle.html", tankstelle=tankstelle,
                                    tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
                                    e10_avg=display_e10_avg,
                                    diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   preis_diesel=preis_diesel, markedFav=isFavorite(id, tankstellen_id))
+                                   preis_diesel=preis_diesel, markedFav=isFavorite(benutzerid, tankstellen_id))
 
 
 """Fragt ab ob ein Benutzer eine bestimmte Tankstelle favorisiert hat."""
 
 
-def isFavorite(benutzerID, tankstellenid):
-    if benutzerID != "" and tankstellenid != "":
+def isFavorite(benutzerid, tankstellenid):
+    if benutzerid != "" and tankstellenid != "":
         cursor = db.cursor()
         cursor.execute("SELECT tankstellenID FROM Benutzer2Tankstelle WHERE benutzerID=%s and tankstellenID = %s;",
-                       (benutzerID, tankstellenid,))
+                       (benutzerid, tankstellenid,))
         if len(cursor.fetchall()) == 1:
             return True
         cursor.close()
