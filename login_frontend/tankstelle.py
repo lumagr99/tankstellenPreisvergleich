@@ -172,25 +172,24 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
 @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
     tankstellen_id = tankstelle_id
-
     # Tankstellendaten holen
-    # TODO Anzeige von Adresse
     cursor = db.cursor()
-    cursor.execute("SELECT id, name, place FROM Tankstellen WHERE ID=%s", (tankstelle_id,))
+    cursor.execute("SELECT id, name, place, postCode, street, houseNumber FROM Tankstellen WHERE ID=%s",
+                   (tankstelle_id,))
     data = cursor.fetchone()
     cursor.close()
-
-    tankstelle = data[1] + " " + data[2]
 
     display_e5_avg = False
     display_e10_avg = False
     display_diesel_avg = False
 
+    # TODO Jonas passender kommentar
     now = datetime.now()
     end = str(now.date()) + " " + str(now.time())[0:8]
     fifteen_minutes = timedelta(minutes=15)
     beginn = str(now.date()) + " " + str((now - fifteen_minutes).time())[0:8]
 
+    # Aktuelle Preise holen
     preise = get_preis_data(tankstelle_id, beginn, end)
     preis_e5 = ""
     preis_e10 = ""
@@ -200,44 +199,52 @@ def tankstelle(tankstelle_id):
         preis_e10 = zeit[2]
         preis_diesel = zeit[3]
 
+    # Überprüfen ob Benutzer eingeloggt
     benutzerid = ""
     if 'loggedin' in session:
         benutzerid = session.get('id')
 
-    if request.method == "GET":
-        # TODO wird das noch benötigt?
-        datum = date.today()  # Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
-        return render_template("tankstelle.html", tankstelle=tankstelle,
-                               tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
-                               e10_avg=display_e10_avg,
-                               diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                               preis_diesel=preis_diesel, markedFav=isFavorite(benutzerid, tankstellen_id))
-    else:
-        if 'tag' in request.form:  # Fall: es soll ein bestimmter Tag angezeigt werden
-            if request.form.get("e5_avg") == "on":
-                display_e5_avg = True
-            if request.form.get("e10_avg"):
-                display_e10_avg = True
-            if request.form.get("diesel_avg"):
-                display_diesel_avg = True
-            datum = request.form.get("datum")
+    # Darzustellende Informationen zusammenstellen
+    info = {
+        "name": data[1] + " " + data[2],
+        "postcode": data[3],
+        "place": data[2],
+        "street": data[4],
+        "houseNumber": data[5],
+        "id": tankstelle_id
+    }
 
-            # Fall: Favoriten Status änderung angefragt
-            fav = request.form.get("favorit")
-            benutzerid = session.get('id')
-            cursor = db.cursor()
-            cursor.execute('DELETE FROM Benutzer2Tankstelle where BenutzerID = %s AND TankstellenID = %s;',
+    preise = {
+        "diesel": preis_diesel,
+        "e5": preis_e5,
+        "e10": preis_e10
+    }
+
+    now = datetime.today().strftime("%Y-%m-%d")
+    if 'tag' in request.form:  # Fall: Formular aktion
+        if request.form.get("e5_avg"):
+            display_e5_avg = True
+        if request.form.get("e10_avg"):
+            display_e10_avg = True
+        if request.form.get("diesel_avg"):
+            display_diesel_avg = True
+        now = request.form.get("datum")
+
+        # Favoriten Status übernehmen
+        fav = request.form.get("favorit")
+
+        cursor = db.cursor()
+        cursor.execute('DELETE FROM Benutzer2Tankstelle where BenutzerID = %s AND TankstellenID = %s;',
+                       (benutzerid, tankstellen_id,))
+        if fav:
+            print("danach")
+            cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
                            (benutzerid, tankstellen_id,))
-            if fav == "on":
-                cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
-                               (benutzerid, tankstellen_id,))
-            cursor.close()
+        cursor.close()
 
-            return render_template("tankstelle.html", tankstelle=tankstelle,
-                                   tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
-                                   e10_avg=display_e10_avg,
-                                   diesel_avg=display_diesel_avg, preis_e5=preis_e5, preis_e10=preis_e10,
-                                   preis_diesel=preis_diesel, markedFav=isFavorite(benutzerid, tankstellen_id))
+    return render_template("tankstelle.html", info=info, datum=now, e5_avg=display_e5_avg,
+                           e10_avg=display_e10_avg, diesel_avg=display_diesel_avg, preise=preise,
+                           markedFav=isFavorite(benutzerid, tankstellen_id))
 
 
 """Fragt ab ob ein Benutzer eine bestimmte Tankstelle favorisiert hat."""
