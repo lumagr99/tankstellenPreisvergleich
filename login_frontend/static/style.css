@@ -27,15 +27,23 @@
     height: 100%;
 }
 
-html, body, .full{
+html, body{
     height: 100%;
-    background-color: rgb(241, 242, 230);
+    width: 100%;
+    background-color: #e1ebf4;
     background-position: center;
     background-size: cover;
+    display: table;
 }
 
+body > div.full {
+    height: 100%;
+    dispaly: table-row;
+}
+
+
 div.content{
-    height: 90%;
+    height: 100%;
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -56,9 +64,6 @@ tr {
   border: 1pt solid black;
 }
 
-th {
-   border: 1pt solid black;
-}
 
 tbody {
    width: 100%;
@@ -104,3 +109,8 @@ h1 {
     text-align: center;
 }
 
+body > footer {
+    background-color: #99BAD8;
+    text-align: center;
+    display: table-row;
+}

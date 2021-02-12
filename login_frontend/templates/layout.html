@@ -29,11 +29,12 @@
     <div class="content">{% block content %}
         {%endblock%}
     </div>
+    {% block footer %}
+        <footer>
+            <a class="about" href="{{ url_for('about') }}">About</a>
+        </footer>
+    {% endblock %}
 </body>
 
-<footer>
-    {% block footer %}
-        <a class="about" href="{{ url_for('about') }}">About</a>
-    {% endblock %}
-</footer>
+
 </html>

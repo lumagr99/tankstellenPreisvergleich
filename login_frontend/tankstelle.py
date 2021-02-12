@@ -160,7 +160,7 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
 
     X_TICKS = 4
     plt.xticks(range(0, len(zeiten_achse), X_TICKS), zeiten_achse[::X_TICKS], rotation=(45),
-               fontsize=(10))  # nur jeden vierten wert aus t benutzen (volle Stunden)
+               fontsize=(5))  # nur jeden vierten wert aus t benutzen (volle Stunden)
 
     ax.grid()
     return fig
