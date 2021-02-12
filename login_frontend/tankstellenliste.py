@@ -102,5 +102,6 @@ def update_favorites(benutzerid, favorite_tankstellen):
         if request.form[item] == 'on':
             cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s)',
                            (benutzerid, item[:-9],))
+            print(cursor.statement)
     cursor.close()
     db.commit()

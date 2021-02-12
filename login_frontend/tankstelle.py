@@ -237,7 +237,6 @@ def tankstelle(tankstelle_id):
         cursor.execute('DELETE FROM Benutzer2Tankstelle where BenutzerID = %s AND TankstellenID = %s;',
                        (benutzerid, tankstellen_id,))
         if fav:
-            print("danach")
             cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
                            (benutzerid, tankstellen_id,))
         cursor.close()

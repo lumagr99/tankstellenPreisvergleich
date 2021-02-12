@@ -19,7 +19,7 @@
                 <tr>
                     <th><a href="{{ url_for('tankstelle.tankstelle', tankstelle_id=t[0]) }}"> {{ t[1] + " " + t[2] }}</a></th>
                     {% if session['loggedin'] == True %}
-                        <th><input type="checkbox"  {%if t[0] in usertankstellen %} checked {% endif %}></th>
+                        <th><input type="checkbox"  name='{{t[0]}}_checkbox' id='{{t[0]}}_checkbox' {%if t[0] in usertankstellen %} checked {% endif %}></th>
                     {% endif %}
                 </tr>
                 {% endfor %}
