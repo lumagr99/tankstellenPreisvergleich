@@ -29,7 +29,7 @@ def show():
         cursor.close()
 
         # Liste von Tankstellen anzeigen
-        return show_tankstellen(benutzerid, data, get_favorites(benutzerid), "tankstellenliste.show")
+        return show_tankstellen(data, get_favorites(benutzerid), "tankstellenliste.show")
 
     if request.method == 'POST':
         if benutzerid != "-1":
@@ -59,7 +59,7 @@ def favorites():
             cursor.close()
 
             # Seite laden
-            return show_tankstellen(benutzerid, data, get_favorites(benutzerid), "tankstellenliste.favorites")
+            return show_tankstellen(data, get_favorites(benutzerid), "tankstellenliste.favorites")
 
         if request.method == 'POST':
             update_favorites(session.get('id'), request.form)  # Aktualisierungen verarbeiten.
@@ -72,13 +72,7 @@ def favorites():
 
 
 def show_tankstellen(tankstellen, favorites, action):
-    tankstellen_list = []
-    print(tankstellen)
-    for t in tankstellen:
-        tankstellen_list.append(
-            [t[1] + "-" + t[2], t[0]])  # Alle Tankstellen in einer Liste speichern
-
-    return render_template('tankstellen.html', tankstellen=tankstellen_list, usertankstellen=favorites, action=action)
+    return render_template('tankstellen.html', tankstellen=tankstellen, usertankstellen=favorites, action=action)
 
 
 """Holt die favoriten Tankstellen anhand einer BenutzerID"""
