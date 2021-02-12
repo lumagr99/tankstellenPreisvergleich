@@ -39,6 +39,7 @@ def get_preis_data(tankstellen_id, begin="2021-01-17%2000:00:00", end="2021-01-1
 
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
 
+
 @page.route("/plot_png/<tankstelle_id>/<datum>/<display_e5_avg>/<display_e10_avg>/<display_diesel_avg>")
 def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_diesel_avg):
     beginn = datum + "%2000:00:00"
@@ -152,11 +153,15 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
 @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
 def tankstelle(tankstelle_id):
     tankstellen_id = tankstelle_id
-    url = backend_url_prefix + ":5000/tankstellen?id=" + tankstelle_id
-    response = urllib.request.urlopen(url)  # Abfragen der Tankstellendaten aus dem Backend
-    tankstellen_data = json.loads(response.read())
 
-    tankstelle = tankstellen_data[tankstellen_id]["name"]
+    # Tankstellendaten holen
+    # TODO Anzeige von Adresse
+    cursor = db.cursor()
+    cursor.execute("SELECT id, name, place FROM Tankstellen WHERE ID=%s", (tankstelle_id,))
+    data = cursor.fetchone()
+    cursor.close()
+
+    tankstelle = data[1] + " " + data[2]
 
     display_e5_avg = False
     display_e10_avg = False
@@ -178,7 +183,6 @@ def tankstelle(tankstelle_id):
     if 'loggedin' in session:
         id = session.get('id')
 
-    # TODO Favoriten überprüfen
     if request.method == "GET":
         datum = date.today()  # Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
         return render_template("tankstelle.html", tankstelle=tankstelle,
@@ -196,8 +200,7 @@ def tankstelle(tankstelle_id):
                 display_diesel_avg = True
             datum = request.form.get("datum")
 
-
-          # Fall: Favoriten Status änderung angefragt
+            # Fall: Favoriten Status änderung angefragt
             fav = request.form.get("favorit")
             id = session.get('id')
             cursor = db.cursor()
@@ -207,7 +210,7 @@ def tankstelle(tankstelle_id):
                 cursor.execute('INSERT INTO Benutzer2Tankstelle(BenutzerID, TankstellenID) VALUES (%s, %s);',
                                (id, tankstellen_id,))
             cursor.close()
-            
+
             return render_template("tankstelle.html", tankstelle=tankstelle,
                                    tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
                                    e10_avg=display_e10_avg,
