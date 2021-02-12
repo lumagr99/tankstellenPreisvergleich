@@ -24,7 +24,7 @@ def show():
 
     if request.method == 'GET':
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM Tankstellen")
+        cursor.execute("SELECT id, name, place FROM Tankstellen")
         data = cursor.fetchall()
         cursor.close()
 
@@ -52,11 +52,12 @@ def favorites():
             cursor = db.cursor()
             # Nur favorisierte Tankstellen holen
             cursor.execute(
-                "SELECT * FROM Tankstellen JOIN Benutzer2Tankstelle on "
+                "SELECT id, name, place FROM Tankstellen JOIN Benutzer2Tankstelle on "
                 "Benutzer2Tankstelle.TankstellenID = Tankstellen.id where Benutzer2Tankstelle.BenutzerID = %s",
                 (benutzerid,))
             data = cursor.fetchall()
             cursor.close()
+
             # Seite laden
             return show_tankstellen(benutzerid, data, get_favorites(benutzerid), "tankstellenliste.favorites")
 
@@ -70,11 +71,12 @@ def favorites():
 """Übergibt die notwendigen Daten."""
 
 
-def show_tankstellen(id, tankstellen, favorites, action):
+def show_tankstellen(tankstellen, favorites, action):
     tankstellen_list = []
+    print(tankstellen)
     for t in tankstellen:
         tankstellen_list.append(
-            [t[1] + "-" + t[5], t[0]])  # Alle Tankstellen in einer Liste speichern
+            [t[1] + "-" + t[2], t[0]])  # Alle Tankstellen in einer Liste speichern
 
     return render_template('tankstellen.html', tankstellen=tankstellen_list, usertankstellen=favorites, action=action)
 
@@ -82,10 +84,10 @@ def show_tankstellen(id, tankstellen, favorites, action):
 """Holt die favoriten Tankstellen anhand einer BenutzerID"""
 
 
-def get_favorites(id):
+def get_favorites(benutzerid):
     usertankstellen = []
     cursor = db.cursor()
-    cursor.execute('SELECT tankstellenid FROM Benutzer2Tankstelle where BenutzerID = %s;', (id,))
+    cursor.execute('SELECT tankstellenid FROM Benutzer2Tankstelle where BenutzerID = %s;', (benutzerid,))
     for curr in cursor.fetchall():
         usertankstellen.append(curr[0])
     cursor.close()
