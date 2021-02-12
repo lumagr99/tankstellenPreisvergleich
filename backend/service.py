@@ -129,7 +129,6 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         query = query.replace("%id", "")
     else:
         query = query.replace("%id", " id='" + id + "' and")
-
     # Datenbank ansprechen
     cursor = db.cursor()
     cursor.execute(query)

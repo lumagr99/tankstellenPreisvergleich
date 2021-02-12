@@ -27,14 +27,30 @@ backend_url_prefix = "http://localhost"
 
 tankstellen_id = ""
 
-"""Funktion zur Rückgabe der Preis daten einer Tankstelle"""
+"""Funktion zur Rückgabe der Preisdaten einer Tankstelle"""
 
 
-def get_preis_data(tankstellen_id, begin="2021-01-17%2000:00:00", end="2021-01-17%2023:59:59"):
-    url = "http://127.0.0.1:5000/preise?filter=id&begin=" + begin + "&end=" + end + "&interval=hourmin&id=" + tankstellen_id
-    response = urllib.request.urlopen(url)
-    preis_data = json.loads(response.read())
-    return preis_data
+def get_preis_data(tankstellen_id, begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
+    cursor = db.cursor()
+    cursor.execute("SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, "
+                   "CONCAT(HOUR(timedate), ':' , MINUTE(timedate)) as hours FROM Preise where id = %s and "
+                   "timedate between %s and %s group by hours, id", (tankstellen_id, begin, end,))
+    data = cursor.fetchall()
+    cursor.close()
+    return data
+
+
+"""Funktion zur Rückgabe der viertel Stundenweisen Durchschnittspreise."""
+
+
+def get_preis_avg(begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
+    cursor = db.cursor()
+    cursor.execute("SELECT round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, "
+                   "CONCAT(HOUR(timedate), ':',MINUTE(timedate)) as hours FROM `Preise` where timedate between %s and %s "
+                   "group by hours order by timedate;", (begin, end,))
+    result = cursor.fetchall()
+    cursor.close()
+    return result
 
 
 """Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
@@ -42,10 +58,10 @@ def get_preis_data(tankstellen_id, begin="2021-01-17%2000:00:00", end="2021-01-1
 
 @page.route("/plot_png/<tankstelle_id>/<datum>/<display_e5_avg>/<display_e10_avg>/<display_diesel_avg>")
 def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_diesel_avg):
-    beginn = datum + "%2000:00:00"
-    end = datum + "%2023:59:59"  # beginn und ende des PReisverlaufs festlegen
+    begin = datum + " 00:00:00"
+    end = datum + " 23:59:59"  # beginn und ende des PReisverlaufs festlegen
 
-    preis_data = get_preis_data(tankstelle_id, beginn, end)  # Preise abfragen
+    preis_data = get_preis_data(tankstelle_id, begin, end)  # Preise abfragen
 
     if display_e5_avg == "True":
         display_e5_avg = True
@@ -60,24 +76,28 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
     else:
         display_diesel_avg = False
 
+    # Preise nach Sorten aufteilen
     preise_e5 = []
-    preise_e10 = []  # Preise nach Sorten aufteilen
+    preise_e10 = []
     preise_diesel = []
     preise_e5_avg = []
     preise_e10_avg = []
     preise_diesel_avg = []
     zeiten = []
+
     for zeit in preis_data:
         zeiten.append(zeit)
-        preise_e5.append(preis_data[zeit][tankstelle_id]["e5"]["price"])
-        preise_e10.append(preis_data[zeit][tankstelle_id]["e10"]["price"])
-        preise_diesel.append(preis_data[zeit][tankstelle_id]["diesel"]["price"])
-        if display_e5_avg:
-            preise_e5_avg.append(preis_data[zeit]["AVG"]["e5"])
-        if display_e10_avg == True:
-            preise_e10_avg.append(preis_data[zeit]["AVG"]["e10"])
-        if display_diesel_avg == True:
-            preise_diesel_avg.append(preis_data[zeit]["AVG"]["diesel"])
+        preise_e5.append(zeit[1])
+        preise_e10.append(zeit[2])
+        preise_diesel.append(zeit[3])
+
+    #Wenn notwendig durchschnittspreise zuordnen
+    if display_e5_avg or display_e10_avg or display_diesel_avg:
+        avg_data = get_preis_avg(begin, end)
+        for zeit in avg_data:
+            preise_e5_avg.append(zeit[0])
+            preise_e10_avg.append(zeit[1])
+            preise_diesel_avg.append(zeit[2])
 
     fig = create_figure(zeiten, preise_e5, preise_e10, preise_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg,
                         display_e5_avg, display_e10_avg, display_diesel_avg)
@@ -93,9 +113,8 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
                   display_e5_avg, display_e10_avg, display_diesel_avg):
     zeiten_achse = []
     for zeit in zeiten:
-        zeiten_achse.append(str(float(zeit.split(":")[0]) + float(zeit.split(":")[1]) / 60))
+        zeiten_achse.append(str(float(zeit[4].split(":")[0]) + float(zeit[4].split(":")[1]) / 60))
     zeiten_achse.sort(key=float)
-
     p_e5 = np.array(preis_e5)  # Umwandeln der Preislisten in Numpy-Arrays
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)
@@ -168,15 +187,18 @@ def tankstelle(tankstelle_id):
     display_diesel_avg = False
 
     now = datetime.now()
-    end = str(now.date()) + "%20" + str(now.time())[0:8]
+    end = str(now.date()) + " " + str(now.time())[0:8]
     fifteen_minutes = timedelta(minutes=15)
-    beginn = str(now.date()) + "%20" + str((now - fifteen_minutes).time())[0:8]
+    beginn = str(now.date()) + " " + str((now - fifteen_minutes).time())[0:8]
 
     preise = get_preis_data(tankstelle_id, beginn, end)
+    preis_e5 = ""
+    preis_e10 = ""
+    preis_diesel = ""
     for zeit in preise:
-        preis_e5 = (preise[zeit][tankstelle_id]["e5"]["price"])
-        preis_e10 = (preise[zeit][tankstelle_id]["e10"]["price"])
-        preis_diesel = (preise[zeit][tankstelle_id]["diesel"]["price"])
+        preis_e5 = zeit[1]
+        preis_e10 = zeit[2]
+        preis_diesel = zeit[3]
 
     datum = ""
     id = ""
@@ -184,6 +206,7 @@ def tankstelle(tankstelle_id):
         id = session.get('id')
 
     if request.method == "GET":
+        # TODO wird das noch benötigt?
         datum = date.today()  # Überprüfen ob ein Spezielles Datum über POST mitgegeben wir, sonst standart wert verwenden
         return render_template("tankstelle.html", tankstelle=tankstelle,
                                tankstelle_id=tankstellen_id, datum=datum, e5_avg=display_e5_avg,
