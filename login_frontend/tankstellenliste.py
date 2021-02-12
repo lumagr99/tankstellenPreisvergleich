@@ -24,9 +24,9 @@ Ermöglicht das zuordnen von Favoriten."""
 @page.route('/tankstellen', methods=['GET', 'POST'])
 def show():
     if request.method == 'GET':
-        url = backend_url_prefix + "/tankstellen"
-        response = urllib.request.urlopen(url)
-        data = json.loads(response.read())  # Alle Tankstellen aus Backend abfragen
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Tankstellen")
+        data = cursor.fetchall()
 
         id = "-1"
         if 'loggedin' in session:
@@ -75,7 +75,7 @@ def show_tankstellen(id, tankstellen, favorites, action):
     tankstellen_list = []
     for t in tankstellen:
         tankstellen_list.append(
-            [tankstellen[t]["name"] + "-" + tankstellen[t]["place"], t])  # Alle Tankstellen in einer Liste speichern
+            [t[1] + "-" + t[5], t[0]])  # Alle Tankstellen in einer Liste speichern
 
     return render_template('tankstellen.html', tankstellen=tankstellen_list, usertankstellen=favorites, action=action)
 
