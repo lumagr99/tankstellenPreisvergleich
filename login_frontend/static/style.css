@@ -91,6 +91,10 @@ tbody {
 }
 
 h2 {
+    display: flex;
+    margin-left: auto;
+    width: 49%;
+    margin-top: 100px;
     text-align: center;
 }
 
@@ -121,8 +125,20 @@ footer {
     margin: 10px;
 }
 
+.adresse > tr {
+    border: none;
+}
+
 .tabellen{
-    margin-top: 200px;
     display: flex;
     align-items: flex-end;
+}
+
+.content_links{
+    width: 91%;
+}
+
+.content_recht{
+    margin-top: 150px;
+    width: 9%;
 }
