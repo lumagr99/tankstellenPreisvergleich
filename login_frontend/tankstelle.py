@@ -155,6 +155,8 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
                fontsize=(5))  # nur jeden vierten wert aus t benutzen (volle Stunden)
 
     ax.grid()
+    ax.set(facecolor="#e1ebf4")         #Hintergrundfarbe des Diagramms anpassen
+    fig.set(facecolor="#e1ebf4")
     return fig
 
 
