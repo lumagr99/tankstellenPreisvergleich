@@ -37,8 +37,7 @@ html, body{
 }
 
 div.full {
-    height: 90%;
-    dispaly: table-row;
+    height: 80%;
 }
 
 
@@ -114,6 +113,7 @@ body > footer {
     text-align: center;
     display: table-row;
     height: 10%;
+    margin-top: 10px;
 }
 
 .adresse {
