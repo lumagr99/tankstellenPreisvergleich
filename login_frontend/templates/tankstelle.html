@@ -11,8 +11,8 @@
 {%block content %}
     <h2>{{ info['name'] }}</h2>
     <img class="plot" src="{{ url_for('tankstelle.plot_png', tankstelle_id=info['id'], datum=datum, display_e5_avg=e5_avg, display_e10_avg=e10_avg, display_diesel_avg=diesel_avg) }}">
-
-    <table name="Aktuell" class="aktuell">
+    <div class="tabellen">
+        <table name="Aktuell" class="aktuell">
         <tr>
             <th>
                 Aktuelle Preise
@@ -33,7 +33,7 @@
         </tr>
     </table>
 
-    <table name="adresse" class="adresse">
+        <table name="adresse" class="adresse">
         <tr>
            <td>Ort</td>
            <td>{{ info['place'] }}</td>
@@ -47,7 +47,7 @@
             <td>{{ info['houseNumber'] }}</td>
         </tr>
     </table>
-
+    </div>
     <form action="" method="post" name="datum_select" class="datum_select">
         <input type="date" name="datum" required="required" value="{{ datum }}"/>
         <input type="checkbox" id="e5_avg" name="e5_avg" {%if e5_avg %} checked {% endif %}/>
