@@ -2,6 +2,8 @@ import urllib.request
 import json
 import mysql.connector
 
+
+
 # Abfrage der externen API.
 url = "https://creativecommons.tankerkoenig.de/json/list.php?lat=51.324&lng=7.697&rad=25&sort=dist&type=all&apikey=33e99509-7b2b-c804-469d-45a316652ef6"
 response = urllib.request.urlopen(url)

@@ -2,16 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import hashlib
 import string
 import random
+import dotenv
+import os
 
-from login_frontend import tankstellenliste, karte, tankstelle
+from login_frontend import tankstellenliste, karte, tankstelle, Database
 import mysql.connector
 
-db = mysql.connector.connect(
-    host="45.88.109.79",
-    user="tankstellenCrawler",
-    password="qGD0zc5iKsvhyjwO",
-    database="tankdaten"
-)
+
+
+db = Database.getDataBaselogin()
+
 db.ping(True)
 app = Flask(__name__)
 
@@ -20,9 +20,8 @@ app.register_blueprint(karte.page)
 app.register_blueprint(tankstelle.page)
 app.secret_key = 'FlaskLoginTest'
 
+
 """Verwaltet den Login eines Benutzers."""
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     msg = ''
