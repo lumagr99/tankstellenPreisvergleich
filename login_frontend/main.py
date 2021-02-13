@@ -116,4 +116,4 @@ def about():
     return render_template('about.html')
 
 
-app.run(port=int(8080), debug=True)
+app.run(host="0.0.0.0", port=int(8080), debug=True)
