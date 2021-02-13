@@ -14,14 +14,23 @@
         <div class="links">
             <title>FahrHeiter SWF</title>
             <img class="logo" src="{{url_for('static', filename='logo.png')}}" alt="Fahr Heiter Logo."/>
-            <a class="block" href="{{ url_for('start')}}" class="active">Start</a>
-            <a class="block" href="{{ url_for('tankstellenliste.show')}}" class="active">Tankstellen</a>
+            <a class="block" title="Home" href="{{ url_for('start')}}" class="active">
+                <img class="menuicon" src="{{url_for('static', filename='home.svg')}}" alt="Home">
+            </a>
             {% if session['loggedin'] == True %}
-                <a class="block" href="{{url_for('tankstellenliste.favorites')}}" class="active">Favoriten</a>
-                <a class="block" href="{{url_for('logout')}}" class="active">Logout</a>
+                <a class="block" href="{{url_for('tankstellenliste.favorites')}}" class="active">
+                    <img class="menuicon" src="{{url_for('static', filename='star.svg')}}" alt="Favoriten">
+                </a>
+                <a class="block" title="Logout" href="{{url_for('logout')}}" class="active">
+                    <img class="menuicon" src="{{url_for('static', filename='logout.svg')}}" alt="Logout">
+                </a>
             {% else %}
-                <a class="block" href="{{ url_for('login') }}" class="active">Login</a>
-                <a class="block" href="{{ url_for('register') }}" class="active">Registrieren</a>
+                <a class="block" title="Login" href="{{ url_for('login') }}" class="active">
+                    <img class="menuicon" src="{{url_for('static', filename='login.svg')}}" alt="Login">
+                </a>
+                <a class="block" title="Registrieren" href="{{ url_for('register') }}" class="active">
+                    <img class="menuicon" src="{{url_for('static', filename='registration.svg')}}" alt="Registrieren">
+                </a>
             {% endif %}
         </div>
     </div>

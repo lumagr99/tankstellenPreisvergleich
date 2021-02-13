@@ -1,7 +1,7 @@
 .links{
     list-style-type: none;
-    margin: 20px;
-    padding: 20px;
+    margin: 10px;
+    padding: 10px;
     background-color: #99BAD8;
     display: flex;
     flex-direction: row;
@@ -9,17 +9,21 @@
 }
 
 .logo{
-    flex-grow: 1;
+    flex-grow: 2;
     order: 1;
-    min-width: 10%;
-    max-width: 15%;
+    min-width: 9%;
+    max-width: 9%;
+}
+
+.menuicon{
+    min-height: 100%;
 }
 
 .block{
     flex-grow: 2;
     order: 2;
-    border: 1px solid black;
     text-align: center;
+    min-height: 100%;
 }
 
 .map{
