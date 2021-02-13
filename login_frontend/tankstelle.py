@@ -1,6 +1,3 @@
-import json
-import urllib
-
 import mysql
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import matplotlib
