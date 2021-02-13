@@ -1,15 +1,10 @@
 import mysql
 from flask import Blueprint, render_template
+from login_frontend import Database
 
 page = Blueprint('karte', __name__, template_folder='templates')
 
-db = mysql.connector.connect(
-    host="45.88.109.79",
-    user="tankstellenCrawler",
-    password="qGD0zc5iKsvhyjwO",
-    database="tankdaten",
-    autocommit=True
-)
+db = Database.getDataBaselogin()
 db.ping(True)
 
 """Generiert die anzuzeigenden Tankstellen und leitet an die Anzeigende html weiter."""

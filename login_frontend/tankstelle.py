@@ -11,16 +11,11 @@ from flask import Flask, render_template, Response, request, Blueprint, session
 import io
 import numpy as np
 from datetime import date, datetime, timedelta
+from login_frontend import Database
 
 page = Blueprint('tankstelle', __name__, template_folder='templates')
 
-db = mysql.connector.connect(
-    host="45.88.109.79",
-    user="tankstellenCrawler",
-    password="qGD0zc5iKsvhyjwO",
-    database="tankdaten",
-    autocommit=True
-)
+db = Database.getDataBaselogin()
 db.ping(True)
 
 backend_url_prefix = "http://localhost"
