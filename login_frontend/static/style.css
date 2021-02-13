@@ -30,10 +30,15 @@
 html, body{
     height: 100%;
     width: 100%;
+}
+
+
+body {
     background-color: #e1ebf4;
     background-position: center;
     background-size: cover;
-    display: table;
+    display: flex;
+    flex-direction: column;
 }
 
 div.full {
@@ -42,21 +47,25 @@ div.full {
 
 
 div.content{
-    height: 90%;
-    margin-left: 20px;
-    margin-right: 20px;
+    flex: 1 0 auto;
 }
 
 .plot {
-     width: 49%;
-     height: auto;
-     margin-left: 0px;
+    width: 49%;
+    height: auto;
+    margin-left: 0px;
+    float: left;
+    margin: 10px;
+    flex-grow: 1;
+    flex-wrap: wrap;
 }
 
 
 table {
   border-collapse: collapse;
   width: 100%;
+  flex-grow: 1;
+  flex-wrap: wrap;
 }
 
 tr {
@@ -69,26 +78,20 @@ tbody {
 }
 
 .plot  {
-    float: left;
-    display: inline;
+
     width: 49%;
     margin: 10px;
 }
 
 .aktuell {
-    table-layout: auto;
-    float: left;
-    display: inline;
-    width: 45%;
+    width: 10%;
     margin: 10px;
 }
 
-.datum_select, .favorit {
-    display: inline;
-    border-style: solid;
-    margin: 10px;
-    width: 49%;
-    height: 50%;
+.datum_select {
+    flex-align: auto;
+    flex-grow: 1;
+    flex-wrap: wrap;
 }
 
 h2 {
@@ -108,18 +111,15 @@ h1 {
     text-align: center;
 }
 
-body > footer {
+footer {
     background-color: #99BAD8;
     text-align: center;
-    display: table-row;
     height: 10%;
-    margin-top: 10px;
+    flex-shrink: 0;
 }
 
+
 .adresse {
-    table-layout: auto;
-    float: left;
-    display: inline;
-    width: 45%;
+    width: 10%;
     margin: 10px;
 }
