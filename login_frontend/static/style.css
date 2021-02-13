@@ -36,14 +36,14 @@ html, body{
     display: table;
 }
 
-body > div.full {
-    height: 100%;
+div.full {
+    height: 90%;
     dispaly: table-row;
 }
 
 
 div.content{
-    height: 100%;
+    height: 90%;
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -113,4 +113,13 @@ body > footer {
     background-color: #99BAD8;
     text-align: center;
     display: table-row;
+    height: 10%;
+}
+
+.adresse {
+    table-layout: auto;
+    float: left;
+    display: inline;
+    width: 45%;
+    margin: 10px;
 }
