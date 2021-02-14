@@ -20,7 +20,7 @@ backend_url_prefix = "http://localhost"
 
 tankstellen_id = ""
 
-"""Funktion zur Rückgabe der Preisdaten einer Tankstelle"""
+"""Funktion zur Rückgabe der Preisdaten einer Tankstelle."""
 
 
 def get_preis_data(tankstellen_id, begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
