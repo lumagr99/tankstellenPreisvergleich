@@ -4,45 +4,11 @@ from datetime import datetime
 import mysql.connector
 from flask import Flask
 from flask import request
-import os
-from dotenv import load_dotenv
+from login_frontend import Database
 
-// Lädt Umgebungsvariable für DB Connection -> .env muss im Hauptverzeichnis liegen
-load_dotenv('.env')
-from pathlib import Path
-
-//Pfad für Root directory holen
-def get_project_root() -> Path:
-    return (Path(__file__).parent.parent)
-// Pfad zur .env setzen und laden
-env_path = Path(get_project_root()) / '.env' #.env liegt im Onedrive 
-load_dotenv(dotenv_path=env_path)
-
-db = mysql.connector.connect(
-    host=os.getenv("HOST"),
-    user=os.getenv("USER"),
-    password=os.getenv("PASSWORD"),
-    database=os.getenv("DATABASE"),
-    autocommit=True
-)
-
+db = Database.getDataBaselogin()
 
 app = Flask(__name__)
-
-# TODO fehlerhafte parameter abfangen
-# Verbindungsdaten für Datenbank anlegen
-"""db = mysql.connector.connect(
-    host="45.88.109.79",
-    user="tankstellenCrawler",
-    password="qGD0zc5iKsvhyjwO",
-    database="tankdaten",
-    autocommit=True
-)"""
-
-# Verhindert den Disconnect
-db.ping(True)
-
-print("service")
 
 """ Ermittlung der durchschnittlichen Kraftstoffpreise
 mit der URL /preise und den URL-Parametern:
