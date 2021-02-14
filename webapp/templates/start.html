@@ -9,7 +9,7 @@
 
 {% block content %}
     <div class="full">
-        <iframe class="map" src="http://127.0.0.1:8080/karte" title="Tankstellenkarte"></iframe>
+        <iframe class="map" src="{{url_for('karte.show_map')}}" title="Tankstellenkarte"></iframe>
     </div>
 {% endblock %}
 {% block about %}
