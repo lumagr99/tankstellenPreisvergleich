@@ -43,6 +43,7 @@ body {
     background-size: cover;
     display: flex;
     flex-direction: column;
+    margin: 0px;
 }
 
 div.full {
@@ -116,9 +117,9 @@ h1 {
 }
 
 footer {
-    text-align: center;
-    background-color: #99BAD8;
-    height: 10%;
+    text-align: left;
+    background-color: #e1ebf4;
+    height: 2%;
     flex-shrink: 0;
 }
 

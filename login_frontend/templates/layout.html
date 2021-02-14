@@ -13,7 +13,7 @@
     <div id="links">{% block links %}
         <div class="links">
             <title>FahrHeiter SWF</title>
-            <img class="logo" src="{{url_for('static', filename='logo.png')}}" alt="Fahr Heiter Logo."/>
+            <img class="logo" src="{{url_for('static', filename='logo.svg')}}" alt="Fahr Heiter Logo."/>
             <a class="block" title="Home" href="{{ url_for('start')}}" class="active">
                 <img class="menuicon" src="{{url_for('static', filename='home.svg')}}" alt="Home">
             </a>
@@ -40,7 +40,9 @@
     </div>
     {% block footer %}
         <footer>
-            <a class="about" href="{{ url_for('about') }}">About</a>
+            <a class="block" title="Registrieren" href="{{ url_for('about') }}" class="active">
+                    <img class="menuicon" src="{{url_for('static', filename='info.svg')}}" alt="About">
+            </a>
         </footer>
     {% endblock %}
 </body>
