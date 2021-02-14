@@ -1,6 +1,6 @@
 import mysql
 from flask import Blueprint, render_template
-from login_frontend import Database
+from webapp import Database
 
 page = Blueprint('karte', __name__, template_folder='templates')
 
