@@ -7,15 +7,18 @@ from flask import request
 import os
 from dotenv import load_dotenv
 
-// Lädt Umgebungsvariable für DB Connection -> .env muss im Hauptverzeichnis liegen
+# Lädt Umgebungsvariable für DB Connection -> .env muss im Hauptverzeichnis liegen
 load_dotenv('.env')
 from pathlib import Path
 
-//Pfad für Root directory holen
+
+# Pfad für Root directory holen
 def get_project_root() -> Path:
     return (Path(__file__).parent.parent)
-// Pfad zur .env setzen und laden
-env_path = Path(get_project_root()) / '.env' #.env liegt im Onedrive 
+
+
+# Pfad zur .env setzen und laden
+env_path = Path(get_project_root()) / '.env'  # .env liegt im Onedrive
 load_dotenv(dotenv_path=env_path)
 
 db = mysql.connector.connect(
@@ -25,7 +28,6 @@ db = mysql.connector.connect(
     database=os.getenv("DATABASE"),
     autocommit=True
 )
-
 
 app = Flask(__name__)
 
