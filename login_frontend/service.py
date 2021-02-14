@@ -4,7 +4,7 @@ from datetime import datetime
 import mysql.connector
 from flask import Flask
 from flask import request
-from web import Database
+from login_frontend import Database
 
 db = Database.getDataBaselogin()
 
