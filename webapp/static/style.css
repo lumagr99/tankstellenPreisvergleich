@@ -147,3 +147,7 @@ footer {
     margin-top: 150px;
     width: 9%;
 }
+
+.login_button, .register_button {
+    margin-top: 10px;
+}
