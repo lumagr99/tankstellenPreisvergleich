@@ -3,7 +3,7 @@ import hashlib
 import string
 import random
 
-from login_frontend import tankstellenliste, karte, tankstelle, Database
+from webapp import tankstellenliste, karte, tankstelle, Database
 
 db = Database.getDataBaselogin()
 

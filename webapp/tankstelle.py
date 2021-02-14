@@ -8,7 +8,7 @@ from flask import Flask, render_template, Response, request, Blueprint, session
 import io
 import numpy as np
 from datetime import date, datetime, timedelta, time
-from login_frontend import Database
+from webapp import Database
 import time
 
 page = Blueprint('tankstelle', __name__, template_folder='templates')
