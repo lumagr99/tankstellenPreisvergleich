@@ -1,6 +1,6 @@
 import mysql.connector
 from flask import Blueprint, render_template, session, request, redirect, url_for
-from login_frontend import Database
+from webapp import Database
 
 page = Blueprint('tankstellenliste', __name__, template_folder='templates')
 
