@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 from flask import Flask, render_template, Response, request, Blueprint, session
 import io
 import numpy as np
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, time
 from login_frontend import Database
+import time
 
 page = Blueprint('tankstelle', __name__, template_folder='templates')
 
@@ -223,6 +224,10 @@ def tankstelle(tankstelle_id):
         if request.form.get("diesel_avg"):
             display_diesel_avg = True
         now = request.form.get("datum")
+
+        if time.mktime(datetime.strptime(now, "%Y-%m-%d").timetuple()) <\
+                time.mktime(datetime.strptime("2021-02-01", "%Y-%m-%d").timetuple()):       #Datum muss nach dem 01.02.2021 sein
+            now = "2021-02-01"
 
         # Favoriten Status übernehmen
         fav = request.form.get("favorit")
