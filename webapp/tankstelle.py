@@ -20,10 +20,11 @@ backend_url_prefix = "http://localhost"
 
 tankstellen_id = ""
 
-"""Funktion zur Rückgabe der Preisdaten einer Tankstelle."""
+"""Funktion zur Rückgabe der Preisdaten einer Tankstelle.
+   Rückgarbe als list"""
 
 
-def get_preis_data(tankstellen_id, begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
+def get_preis_data(tankstellen_id, begin="2021-02-01 00:00:00", end="2021-02-01 23:59:59"):
     cursor = db.cursor()
     cursor.execute("SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, "
                    "CONCAT(HOUR(timedate), ':' , MINUTE(timedate)) as hours FROM Preise where id = %s and "
@@ -56,6 +57,7 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
 
     preis_data = get_preis_data(tankstelle_id, begin, end)  # Preise abfragen
 
+    # Überprüfen, ob die Jehweiligen Duschnittspreise angezeigt werden sollen
     if display_e5_avg == "True":
         display_e5_avg = True
     else:
@@ -92,6 +94,7 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
             preise_e10_avg.append(zeit[1])
             preise_diesel_avg.append(zeit[2])
 
+    # Aufrufen der Funktion zum erstellen des Graphen
     fig = create_figure(zeiten, preise_e5, preise_e10, preise_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg,
                         display_e5_avg, display_e10_avg, display_diesel_avg)
     output = io.BytesIO()  # Graph erstellen und auf Canvas bringen
@@ -99,42 +102,45 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
     return Response(output.getvalue(), mimetype='image/png')  # URL für Graph(png) zuruckgeben
 
 
+"""Funktion zurkontrolle, ob der Preis einer sorten duchgänig 0 ist"""
+
+
+def preis_is_zero(preis_list):
+    zero_count = 0
+    for preis in preis_list:
+        if preis == 0:
+            zero_count += 1
+    return zero_count == len(preis_list)
+
+
 """Funktion zu erstellung eines Plots aus den gegebenen daten einer Tankstelle"""
 
 
 def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg,
                   display_e5_avg, display_e10_avg, display_diesel_avg):
+    # Uhrzeiten zu einem Array hinzufügen um diese später für die X-Achse als Beschriftung zu nutzen
     zeiten_achse = []
     for zeit in zeiten:
         zeiten_achse.append(str(float(zeit[4].split(":")[0]) + float(zeit[4].split(":")[1]) / 60))
     zeiten_achse.sort(key=float)
-    p_e5 = np.array(preis_e5)  # Umwandeln der Preislisten in Numpy-Arrays
+
+    # Umwandeln der Preislisten in Numpy-Arrays
+    p_e5 = np.array(preis_e5)
     p_e10 = np.array(preis_e10)
     p_diesel = np.array(preis_diesel)
 
+    # Plot initialisieren
     fig, ax = plt.subplots()
 
-    zero_count = 0
-    for preis in p_e5:
-        if preis == 0:
-            zero_count += 1
-    if zero_count != len(p_e5):
+    # Überprüfen, ob ein Preis duchgänig null ist sonst den PReisververlauf plotten
+    if not preis_is_zero(p_e5):
         ax.plot(zeiten_achse, p_e5, label="E5", color="blue")
-
-    zero_count = 0
-    for preis in p_e10:
-        if preis == 0:  # Überprüfen, ob der preis einer Sorte duchgänig 0 ist, sonst Plotten der Sortenpreise
-            zero_count += 1
-    if zero_count != len(p_e10):
+    if not preis_is_zero(p_e10):
         ax.plot(zeiten_achse, p_e10, label="E10", color="red")
-
-    zero_count = 0
-    for preis in p_diesel:
-        if preis == 0:
-            zero_count += 1
-    if zero_count != len(p_diesel):
+    if not preis_is_zero(p_diesel):
         ax.plot(zeiten_achse, p_diesel, label="Diesel", color="green")
 
+    # Überprüfung ob die Duschnitsspreise angezeigt werden sollen, und wenn ja diese plotten
     if display_e5_avg:
         p_e5_avg = np.array(preise_e5_avg)
         ax.plot(zeiten_achse, p_e5_avg, label="E5 Duchschnitt", linestyle=(0, (5, 2)), color="blue")
@@ -147,16 +153,19 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
         p_diesel_avg = np.array(preise_diesel_avg)
         ax.plot(zeiten_achse, p_diesel_avg, label="Diesel Duchschnitt", linestyle=(0, (5, 2)), color="green")
 
+    # Festlegen der Achsen beschriftung, Titel und position der Legende
     ax.set(xlabel='Zeit (h)', ylabel='Preis (€)',
-           title='Preisverlauf')  # Festlegen der Achsen beschriftung, Titel und position der Legende
+           title='Preisverlauf')
     ax.legend(loc='upper left')
 
+    # nur jeden vierten wert aus t benutzen (volle Stunden)
     X_TICKS = 4
     plt.xticks(range(0, len(zeiten_achse), X_TICKS), zeiten_achse[::X_TICKS], rotation=(45),
-               fontsize=(5))  # nur jeden vierten wert aus t benutzen (volle Stunden)
+               fontsize=(5))
 
+    # Rastter auf Diagramm erstellen und Hintergrundfarbe des Diagramms anpassen
     ax.grid()
-    ax.set(facecolor="#e1ebf4")         #Hintergrundfarbe des Diagramms anpassen
+    ax.set(facecolor="#e1ebf4")
     fig.set(facecolor="#e1ebf4")
     return fig
 
@@ -174,11 +183,12 @@ def tankstelle(tankstelle_id):
     data = cursor.fetchone()
     cursor.close()
 
+    # Standartgemäßig die Duschnitspreise nicht anzeigen lassen
     display_e5_avg = False
     display_e10_avg = False
     display_diesel_avg = False
 
-    # TODO Jonas passender kommentar
+    # Zeitraum zwischen jetzt und den letzten 15 minuten festlegen, damit auf jeden FallDaten vorhanden sind
     now = datetime.now()
     end = str(now.date()) + " " + str(now.time())[0:8]
     fifteen_minutes = timedelta(minutes=15)
@@ -216,17 +226,23 @@ def tankstelle(tankstelle_id):
     }
 
     now = datetime.today().strftime("%Y-%m-%d")
-    if 'tag' in request.form:  # Fall: Formular aktion
+    # Fall: PUT-Request: dinbestimmtes Datum / Duschnitspreis wurde angewählt oder die Tankstelle wurde als Favorit gekennzeichnet
+    if 'tag' in request.form:
+        # Überprüfen, welche Duchschnitspreise anugewählt wurden
         if request.form.get("e5_avg"):
             display_e5_avg = True
         if request.form.get("e10_avg"):
             display_e10_avg = True
         if request.form.get("diesel_avg"):
             display_diesel_avg = True
+
+        # Das anzuzeigenen Datum auf das vom Nutzer ausgewählte setzen
         now = request.form.get("datum")
 
-        if time.mktime(datetime.strptime(now, "%Y-%m-%d").timetuple()) <\
-                time.mktime(datetime.strptime("2021-02-01", "%Y-%m-%d").timetuple()):       #Datum muss nach dem 01.02.2021 sein
+        # Überprüfen bo das augewählte Datum vor dem 01.02.2021 liegt: falls ja Datum auf 01.02.2021 setzen
+        if time.mktime(datetime.strptime(now, "%Y-%m-%d").timetuple()) < \
+                time.mktime(
+                    datetime.strptime("2021-02-01", "%Y-%m-%d").timetuple()):  # Datum muss nach dem 01.02.2021 sein
             now = "2021-02-01"
 
         # Favoriten Status übernehmen
@@ -240,6 +256,7 @@ def tankstelle(tankstelle_id):
                            (benutzerid, tankstellen_id,))
         cursor.close()
 
+    # Seiten mit entsprechende Variablen zurückgeben
     return render_template("tankstelle.html", info=info, datum=now, e5_avg=display_e5_avg,
                            e10_avg=display_e10_avg, diesel_avg=display_diesel_avg, preise=preise,
                            markedFav=isFavorite(benutzerid, tankstellen_id))
