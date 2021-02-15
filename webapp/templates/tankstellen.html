@@ -10,12 +10,11 @@
 
 {% block content %}
 
-<div class="favoriten">
-    <div>
+<div>
+    <div class="favoriten">
         <h2>Favoriten</h2>
         <form action="{{ url_for(action) }}" method="post">
             <table>
-                {%for t in tankstellen%}
                 <tr>
                     <th>Tankstelle</th>
                     <th>e5</th>
@@ -23,6 +22,7 @@
                     <th>Diesel</th>
                     <th></th>
                 </tr>
+                {%for t in tankstellen%}
                 <tr>
                     <td><a href="{{ url_for('tankstelle.tankstelle', tankstelle_id=t[0]) }}"> {{ t[1] + " " + t[2] }}</a></td>
                     {% if not t[3] == Null %}
