@@ -161,3 +161,7 @@ footer {
   width: 40%;
   text-align: center;
 }
+
+.speichern_button {
+    margin-top: 5px;
+}

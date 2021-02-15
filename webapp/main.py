@@ -3,9 +3,9 @@ import hashlib
 import string
 import random
 
-from webapp import tankstellenliste, karte, tankstelle, Database
+from webapp import tankstellenliste, karte, tankstelle, database
 
-db = Database.getDataBaselogin()
+db = database.getDataBaselogin()
 
 db.ping(True)
 app = Flask(__name__)

@@ -1,10 +1,10 @@
 import mysql
 from flask import Blueprint, render_template
-from webapp import Database
+from webapp import database
 
 page = Blueprint('karte', __name__, template_folder='templates')
 
-db = Database.getDataBaselogin()
+db = database.getDataBaselogin()
 db.ping(True)
 
 """Generiert die anzuzeigenden Tankstellen und leitet an die Anzeigende html weiter."""

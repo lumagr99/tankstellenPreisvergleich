@@ -8,12 +8,12 @@ from flask import Flask, render_template, Response, request, Blueprint, session
 import io
 import numpy as np
 from datetime import date, datetime, timedelta, time
-from webapp import Database
+from webapp import database
 import time
 
 page = Blueprint('tankstelle', __name__, template_folder='templates')
 
-db = Database.getDataBaselogin()
+db = database.getDataBaselogin()
 db.ping(True)
 
 backend_url_prefix = "http://localhost"

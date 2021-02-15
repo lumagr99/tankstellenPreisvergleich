@@ -2,11 +2,11 @@ from datetime import datetime, timedelta
 
 import mysql.connector
 from flask import Blueprint, render_template, session, request, redirect, url_for
-from webapp import Database
+from webapp import database
 
 page = Blueprint('tankstellenliste', __name__, template_folder='templates')
 
-db = Database.getDataBaselogin()
+db = database.getDataBaselogin()
 db.ping(True)
 
 """Zeigt eine Übersicht über alle Tankstellen.

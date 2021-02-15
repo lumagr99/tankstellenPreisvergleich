@@ -24,4 +24,5 @@ def getDataBaselogin():
         database=os.getenv("DATABASE"),
         autocommit=True
     )
+    db.ping(True)
     return db

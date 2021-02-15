@@ -4,9 +4,9 @@ from datetime import datetime
 import mysql.connector
 from flask import Flask
 from flask import request
-from webapp import Database
+from webapp import database
 
-db = Database.getDataBaselogin()
+db = database.getDataBaselogin()
 
 app = Flask(__name__)
 
