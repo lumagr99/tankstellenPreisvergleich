@@ -153,3 +153,11 @@ footer {
 .login_button, .register_button {
     margin-top: 10px;
 }
+
+.favoriten, .login, .register{
+ display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+  text-align: center;
+}

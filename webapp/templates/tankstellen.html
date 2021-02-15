@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<main>
+<div class="favoriten">
     <div>
         <h2>Favoriten</h2>
         <form action="{{ url_for(action) }}" method="post">
@@ -38,7 +38,7 @@
             {% endif %}
         </form>
     </div>
-</main>
+</div>
 {% endblock %}
 
 {% block about %}
