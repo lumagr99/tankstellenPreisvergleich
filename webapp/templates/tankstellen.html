@@ -17,18 +17,24 @@
             <table>
                 {%for t in tankstellen%}
                 <tr>
-                    <th><a href="{{ url_for('tankstelle.tankstelle', tankstelle_id=t[0]) }}"> {{ t[1] + " " + t[2] }}</a></th>
+                    <td><a href="{{ url_for('tankstelle.tankstelle', tankstelle_id=t[0]) }}"> {{ t[1] + " " + t[2] }}</a></td>
                     {% if not t[3] == Null %}
-                        <th><p>{{t[3]}} €</p></th>
+                        <td><p>{{t[3]}} €</p></td>
+                    {% else %}
+                        <td></td>
                     {% endif %}
                     {% if not t[4] == Null %}
-                        <th><p>{{t[4]}} €</p></th>
+                        <td><p>{{t[4]}} €</p></td>
+                    {% else %}
+                        <td></td>
                     {% endif %}
                     {% if not t[5] == Null %}
-                        <th><p>{{t[5]}} €</p></th>
+                        <td><p>{{t[5]}} €</p></td>
+                    {% else %}
+                        <td></td>
                     {% endif %}
                     {% if session['loggedin'] == True %}
-                        <th><input type="checkbox"  name='{{t[0]}}_checkbox' id='{{t[0]}}_checkbox' {%if t[0] in usertankstellen %} checked {% endif %}></th>
+                        <td><input type="checkbox"  name='{{t[0]}}_checkbox' id='{{t[0]}}_checkbox' {%if t[0] in usertankstellen %} checked {% endif %}></td>
                     {% endif %}
                 </tr>
                 {% endfor %}
