@@ -192,10 +192,10 @@ def tankstelle(tankstelle_id):
     now = datetime.now()
     end = str(now.date()) + " " + str(now.time())[0:8]
     fifteen_minutes = timedelta(minutes=15)
-    beginn = str(now.date()) + " " + str((now - fifteen_minutes).time())[0:8]
+    begin = str(now.date()) + " " + str((now - fifteen_minutes).time())[0:8]
 
     # Aktuelle Preise holen
-    preise = get_preis_data(tankstelle_id, beginn, end)
+    preise = get_preis_data(tankstelle_id, begin, end)
     preis_e5 = ""
     preis_e10 = ""
     preis_diesel = ""
