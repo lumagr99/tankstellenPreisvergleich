@@ -52,12 +52,13 @@ div.full {
 
 
 div.content{
-    flex: 1 0 auto;
+    display: flex;
+    align-items: stretch
 }
 
 .plot {
     display: flex;
-    width: 49%;
+    width: 100%;
     height: auto;
     margin-left: 0px;
     float: left;
@@ -90,14 +91,10 @@ tbody {
 }
 
 .datum_select {
-    flex-align: auto;
-    flex-grow: 1;
-    flex-wrap: wrap;
+    margin-left: 9px;
 }
 
 h2 {
-    display: flex;
-    margin-left: auto;
     width: 49%;
     margin-top: 100px;
     text-align: center;
@@ -140,12 +137,13 @@ footer {
 }
 
 .content_links{
-    width: 91%;
+    width: 50%;
+    height: 90%
 }
 
-.content_recht{
-    margin-top: 150px;
-    width: 9%;
+.content_rechts{
+    height: 90%;
+    width: 50%;
 }
 
 .login_button, .register_button {
