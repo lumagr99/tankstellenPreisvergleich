@@ -17,6 +17,12 @@
             <table>
                 {%for t in tankstellen%}
                 <tr>
+                    <th>Tankstelle</th>
+                    <th>e5</th>
+                    <th>e10</th>
+                    <th>Diesel</th>
+                </tr>
+                <tr>
                     <td><a href="{{ url_for('tankstelle.tankstelle', tankstelle_id=t[0]) }}"> {{ t[1] + " " + t[2] }}</a></td>
                     {% if not t[3] == Null %}
                         <td><p>{{t[3]}} €</p></td>

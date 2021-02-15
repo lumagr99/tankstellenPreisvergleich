@@ -1,14 +1,13 @@
 import json
 from datetime import datetime
 
-import mysql.connector
-from flask import Flask
+from flask import Blueprint
 from flask import request
 from webapp import database
 
-db = database.getDataBaselogin()
+page = Blueprint('service', __name__, template_folder='templates')
 
-app = Flask(__name__)
+db = database.getDataBaselogin()
 
 """ Ermittlung der durchschnittlichen Kraftstoffpreise
 mit der URL /preise und den URL-Parametern:
@@ -19,7 +18,7 @@ interval=[days/hours/weekdays/hourmin, gibt Monatstage, Stunden, Wochentage oder
 id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
 
 
-@app.route('/preise')
+@page.route('/api/preise')
 def preise():
     filter = request.args.get('filter', default='all', type=str)
 
@@ -45,7 +44,7 @@ def preise():
 id = [tankstellenID, nur wenn nach ID gefiltert werden soll!"""
 
 
-@app.route('/tankstellen')
+@page.route('/api/tankstellen')
 def tankstellen():
     tankstellenid = request.args.get('id', default="0", type=str)
 
@@ -91,6 +90,8 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
     query = ""
 
     avg = durchschnittsWerte(begin, end)
+
+    # Unterscheide SQL Query je nach Filter
     if interval == "days" or interval == "weekdays":
         query = "SELECT id, round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel , timedate, " + \
                 "avg(e5/" + str(avg['e5']) + ") as 'e5Faktor', " + \
@@ -117,10 +118,12 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
         query = query.replace("%id", "")
     else:
         query = query.replace("%id", " id='" + id + "' and")
-    # Datenbank ansprechen
+
+    # Datenbank abfragen
     cursor = db.cursor()
     cursor.execute(query)
     res = cursor.fetchall()
+    cursor.close()
 
     ret = {}
 
@@ -157,23 +160,6 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
             "e10": e10,
             "diesel": diesel
         }
-
-    query = "SELECT round(avg(e5), 2) as e5, round(avg(e10), 2) as e10, round(avg(diesel), 2) as diesel, " + \
-            "CONCAT(HOUR(timedate), ':',MINUTE(timedate)) as hours FROM `Preise` where timedate between '" + begin + \
-            "' and '" + end + "' group by hours order by timedate;"
-    cursor.execute(query)
-    res = cursor.fetchall()
-    cursor.close()
-
-    # Einfügen in rückgabe Liste
-    for r in res:
-        x = r[3]
-        ret[x]["AVG"] = {
-            "e5": r[0],
-            "e10": r[1],
-            "diesel": r[2]
-        }
-
     return ret
 
 
@@ -191,7 +177,3 @@ def durchschnittsWerte(begin, end):
     ret = {'e10': result[0][0], 'e5': result[0][1], 'diesel': result[0][2],
            'time': {'begin': begin, 'end': end}}
     return ret
-
-
-if __name__ == '__main__':
-    app.run()

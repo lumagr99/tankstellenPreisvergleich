@@ -5,7 +5,6 @@ from webapp import database
 page = Blueprint('karte', __name__, template_folder='templates')
 
 db = database.getDataBaselogin()
-db.ping(True)
 
 """Generiert die anzuzeigenden Tankstellen und leitet an die Anzeigende html weiter."""
 

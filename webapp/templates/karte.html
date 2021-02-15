@@ -40,22 +40,26 @@
     // UI erstellen
     let ui = H.ui.UI.createDefault(map, maptypes);
 
-    let svg = new H.map.Icon("{{url_for('static', filename='marker.png')}}", {size:{w: 50, h:65}});
+    let svg = new H.map.Icon("{{url_for('static', filename='marker.png')}}", {size: {w: 50, h: 65}});
     console.log(svg)
 
+    //Fügt einen Marker zu einer Map hinzu
     function addMarkerToGroup(group, coordinate, html) {
         let marker = new H.map.Marker(coordinate, {icon: svg});
         marker.setData(html);
         group.addObject(marker);
     }
 
+    //Tankstellen für erstellen von Bubbels holen
     let tankstellen = JSON.parse(transform('{{tankstellen_list}}').replaceAll("'", '"'));
 
+    //Verwaltet das hinzufügen von Tankstellen-Bubbles
     function addInfoBubble(map) {
         let group = new H.map.Group();
 
         map.addObject(group);
 
+        //Auf klick reagieren
         group.addEventListener('tap', function (evt) {
             let bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
                 content: evt.target.getData()
@@ -63,6 +67,7 @@
             ui.addBubble(bubble);
         }, false);
 
+        //Hinzufügen delegieren
         for (t in tankstellen) {
             let curr = tankstellen[t];
             let url = "/tankstelle/" + t;
@@ -71,6 +76,7 @@
         }
     }
 
+    //Zum Transformieren der Übergabedatei.
     function transform(str) {
         return str.replace(/&#([0-9]{1,3});/gi, function (match, numStr) {
             let num = parseInt(numStr, 10); // read num as normal number

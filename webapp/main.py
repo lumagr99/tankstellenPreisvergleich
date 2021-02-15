@@ -3,16 +3,16 @@ import hashlib
 import string
 import random
 
-from webapp import tankstellenliste, karte, tankstelle, database
+from webapp import tankstellenliste, karte, tankstelle, database, service
 
 db = database.getDataBaselogin()
 
-db.ping(True)
 app = Flask(__name__)
 
 app.register_blueprint(tankstellenliste.page)
 app.register_blueprint(karte.page)
 app.register_blueprint(tankstelle.page)
+app.register_blueprint(service.page)
 app.secret_key = 'FlaskLoginTest'
 
 """Verwaltet den Login eines Benutzers."""

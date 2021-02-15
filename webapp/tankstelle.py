@@ -14,7 +14,6 @@ import time
 page = Blueprint('tankstelle', __name__, template_folder='templates')
 
 db = database.getDataBaselogin()
-db.ping(True)
 
 backend_url_prefix = "http://localhost"
 

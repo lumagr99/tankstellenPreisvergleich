@@ -7,7 +7,6 @@ from webapp import database
 page = Blueprint('tankstellenliste', __name__, template_folder='templates')
 
 db = database.getDataBaselogin()
-db.ping(True)
 
 """Zeigt eine Übersicht über alle Tankstellen.
 Ermöglicht das zuordnen von Favoriten.
