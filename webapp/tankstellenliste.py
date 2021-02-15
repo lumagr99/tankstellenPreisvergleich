@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import mysql.connector
 from flask import Blueprint, render_template, session, request, redirect, url_for
 from webapp import Database
@@ -8,7 +10,8 @@ db = Database.getDataBaselogin()
 db.ping(True)
 
 """Zeigt eine Übersicht über alle Tankstellen.
-Ermöglicht das zuordnen von Favoriten."""
+Ermöglicht das zuordnen von Favoriten.
+Nicht mehr direkt für den Benutzer über die Navigation zu errreichen. Hauptsächlich für Debug Zwecke."""
 
 
 @page.route('/tankstellen', methods=['GET', 'POST'])
@@ -45,11 +48,17 @@ def favorites():
             benutzerid = session.get('id')  # BenutzerID zuweisen
 
             cursor = db.cursor()
-            # Nur favorisierte Tankstellen holen
+            # Nur favorisierte Tankstellen mit aktuellen Preisen holen
+            now = datetime.now()
+            end = str(now.date()) + " " + str(now.time())[0:8]
+            begin = str(now.date()) + " " + str((now - timedelta(minutes=15)).time())[0:8]
             cursor.execute(
-                "SELECT id, name, place FROM Tankstellen JOIN Benutzer2Tankstelle on "
-                "Benutzer2Tankstelle.TankstellenID = Tankstellen.id where Benutzer2Tankstelle.BenutzerID = %s",
-                (benutzerid,))
+                "select Tankstellen.id, Tankstellen.name, Tankstellen.place, Preise.e5, Preise.e10, Preise.diesel FROM Tankstellen "
+                "join Benutzer2Tankstelle ON Benutzer2Tankstelle.TankstellenID = Tankstellen.id "
+                "join Preise ON Tankstellen.id = Preise.id "
+                "WHERE Benutzer2Tankstelle.BenutzerID = %s "
+                "AND Preise.timedate BETWEEN %s AND %s "
+                "ORDER BY Preise.timedate DESC", (benutzerid, begin, end,))
             data = cursor.fetchall()
             cursor.close()
 

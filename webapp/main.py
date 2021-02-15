@@ -33,7 +33,7 @@ def login():
             session['loggedin'] = True
             session['id'] = account[0]
             session['benutzername'] = account[1]
-            return redirect(url_for('tankstellenliste.show'))
+            return redirect(url_for('start'))
         else:
             msg = 'Ups, das war wohl nichts!'
     return render_template('login.html', msg=msg)
