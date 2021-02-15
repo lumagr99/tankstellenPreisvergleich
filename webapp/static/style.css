@@ -47,13 +47,17 @@ body {
 }
 
 div.full {
-    height: 80%;
+    height: 100%;
+    width: 100%;
 }
 
 
 div.content{
     display: flex;
-    align-items: stretch
+    align-items: stretch;
+    height: 90%;
+    width: auto;
+    margin: 9px;
 }
 
 .plot {
@@ -91,7 +95,7 @@ tbody {
 }
 
 .datum_select {
-    margin-left: 8px;
+    margin-left: 9px;
 }
 
 h2 {
