@@ -163,5 +163,9 @@ footer {
 }
 
 .speichern_button {
-    margin-top: 5px;
+    margin-top: 1%;
+}
+
+.favoriten_überschrift {
+    margin-left: 25%;
 }
