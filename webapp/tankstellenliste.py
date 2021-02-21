@@ -37,7 +37,8 @@ def show():
     return redirect(url_for('start'))
 
 
-"""Generiert eine Favoritenliste."""
+"""Generiert eine Favoritenliste.
+Author: Rust"""
 
 
 @page.route('/favoriten', methods=['GET', 'POST'])
@@ -71,7 +72,8 @@ def favorites():
     return redirect(url_for('start'))
 
 
-"""Übergibt die notwendigen Daten."""
+"""Übergibt die notwendigen Daten.
+Author: Rust"""
 
 
 def show_tankstellen(tankstellen, favorites, action):
