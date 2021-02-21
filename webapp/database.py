@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 from pathlib import Path
 import mysql.connector
 
-""" Funktion um den Pfad des Projektes auszulesen. """
+""" Funktion um den Pfad des Projektes auszulesen. 
+    Author: Rust"""
 
 def get_project_root() -> Path:
     return (Path(__file__).parent.parent)
@@ -12,7 +13,8 @@ def get_project_root() -> Path:
 env_path = Path(get_project_root()) / '.env'  # Projekt pfad zur .enf zusammenfügen
 load_dotenv(dotenv_path=env_path)
 
-""" Funktion um den Datenbank-Login bereitzustellen und enstrpechend zurück zugeben."""
+""" Funktion um den Datenbank-Login bereitzustellen und enstrpechend zurück zugeben.
+    Author: Rust"""
 
 def getDataBaselogin():
     db = mysql.connector.connect(
