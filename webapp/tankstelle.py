@@ -236,13 +236,19 @@ def tankstelle(tankstelle_id):
             display_diesel_avg = True
 
         # Das anzuzeigenen Datum auf das vom Nutzer ausgewählte setzen
-        now = request.form.get("datum")
-
-        # Überprüfen bo das augewählte Datum vor dem 01.02.2021 liegt: falls ja Datum auf 01.02.2021 setzen
-        if time.mktime(datetime.strptime(now, "%Y-%m-%d").timetuple()) < \
+        temptime = request.form.get("datum")
+        print(now, temptime)
+        # Überprüfen ob das augewählte Datum vor dem 01.02.2021 liegt: falls ja Datum auf 01.02.2021 setzen
+        if time.mktime(datetime.strptime(temptime, "%Y-%m-%d").timetuple()) < \
                 time.mktime(
                     datetime.strptime("2021-02-01", "%Y-%m-%d").timetuple()):  # Datum muss nach dem 01.02.2021 sein
             now = "2021-02-01"
+        # Überprüfen ob das Datum vor dem heutigen liegt
+        elif time.mktime(datetime.strptime(temptime, "%Y-%m-%d").timetuple()) < \
+                time.mktime(
+                    datetime.strptime(now, "%Y-%m-%d").timetuple()):
+            now = temptime
+
 
         # Favoriten Status übernehmen
         fav = request.form.get("favorit")
