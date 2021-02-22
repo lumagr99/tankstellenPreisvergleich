@@ -16,7 +16,7 @@ app.register_blueprint(service.page)
 app.secret_key = 'FlaskLoginTest'
 
 """Verwaltet den Login eines Benutzers.
-Author: Rust"""
+   Author: Graef"""
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -40,7 +40,7 @@ def login():
 
 
 """Verwaltet den Logout eines Benutzers.
-Author: Rust"""
+   Author: Graef, Rust"""
 
 
 @app.route('/logout', methods=['GET'])
@@ -51,7 +51,8 @@ def logout():
     return redirect(url_for('start'))
 
 
-"""Verwaltet die Registrierung eines neuen Benutzers."""
+"""Verwaltet die Registrierung eines neuen Benutzers.
+   Author: Graef"""
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -69,8 +70,9 @@ def register():
 
 
 """Validiert ob ein Account existiert, wenn nicht erstellt es ihn.
-Gibt eine passende Fehlermeldung zurück.
-Generiert zum Passwort einen Salt und Hasht die kombination beider."""
+   Gibt eine passende Fehlermeldung zurück.
+   Generiert zum Passwort einen Salt und Hasht die kombination beider.
+   Author: Graef"""
 
 
 def createAccount(benutzername, password):
@@ -97,7 +99,7 @@ def createAccount(benutzername, password):
 
 
 """Hasht einen angegeben String mit SHA 256.
-Author: Rust"""
+   Author: Graef"""
 
 
 def hash_sha256(text_string):
@@ -105,12 +107,17 @@ def hash_sha256(text_string):
     return text_string
 
 
-"""Definiert die Startseite"""
+"""Definiert die Startseite
+   Author: Graef"""
 
 
 @app.route('/')
 def start():
     return render_template('start.html')
+
+
+""" Leitet an die About Seite weiter.
+    Author: Rust"""
 
 
 @app.route('/about')

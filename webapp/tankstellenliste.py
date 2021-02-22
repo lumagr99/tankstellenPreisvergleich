@@ -10,7 +10,8 @@ db = database.getDataBaselogin()
 
 """Zeigt eine Übersicht über alle Tankstellen.
 Ermöglicht das zuordnen von Favoriten.
-Nicht mehr direkt für den Benutzer über die Navigation zu errreichen. Hauptsächlich für Debug Zwecke."""
+Nicht mehr direkt für den Benutzer über die Navigation zu errreichen. Hauptsächlich für Debug Zwecke.
+Author: Graef, Kloos"""
 
 
 @page.route('/tankstellen', methods=['GET', 'POST'])
@@ -38,7 +39,7 @@ def show():
 
 
 """Generiert eine Favoritenliste.
-Author: Rust"""
+Author: Graef, Kloos, Rust"""
 
 
 @page.route('/favoriten', methods=['GET', 'POST'])
@@ -73,14 +74,15 @@ def favorites():
 
 
 """Übergibt die notwendigen Daten.
-Author: Rust"""
+Author: Graef"""
 
 
 def show_tankstellen(tankstellen, favorites, action):
     return render_template('tankstellen.html', tankstellen=tankstellen, usertankstellen=favorites, action=action)
 
 
-"""Holt die favoriten Tankstellen anhand einer BenutzerID"""
+"""Holt die favoriten Tankstellen anhand einer BenutzerID
+   Author: Graef, Rust"""
 
 
 def get_favorites(benutzerid):
@@ -94,7 +96,8 @@ def get_favorites(benutzerid):
     return usertankstellen
 
 
-"""Aktualisiert die favoritisierten Tankstellen für eine BenutzerID id und einer Liste von Tankstellen"""
+"""Aktualisiert die favoritisierten Tankstellen für eine BenutzerID id und einer Liste von Tankstellen
+   Author: Graef"""
 
 
 def update_favorites(benutzerid, favorite_tankstellen):

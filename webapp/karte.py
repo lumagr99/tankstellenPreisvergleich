@@ -6,7 +6,8 @@ page = Blueprint('karte', __name__, template_folder='templates')
 
 db = database.getDataBaselogin()
 
-"""Generiert die anzuzeigenden Tankstellen und leitet an die Anzeigende html weiter."""
+"""Generiert die anzuzeigenden Tankstellen und leitet an die Anzeigende html weiter.
+   Author: Graef"""
 
 
 @page.route('/karte')

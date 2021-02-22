@@ -9,14 +9,14 @@ page = Blueprint('service', __name__, template_folder='templates')
 
 db = database.getDataBaselogin()
 
-""" Ermittlung der durchschnittlichen Kraftstoffpreise
-mit der URL /preise und den URL-Parametern:
-filter=[all/durchschnitt],
-begin=[StartZeitpunkt, default 2021-01-15 00:00:00],
-end=[endZeitpunkt, default currentTimestamp]
-interval=[days/hours/weekdays/hourmin, gibt Monatstage, Stunden, Wochentage oder Stunden:Minuten genaue Preisstatistik, nur bei filter=[all/id]]
-id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]
-Author: Rust"""
+"""Ermittlung der durchschnittlichen Kraftstoffpreise
+   mit der URL /preise und den URL-Parametern:
+   filter=[all/durchschnitt],
+   begin=[StartZeitpunkt, default 2021-01-15 00:00:00],
+   end=[endZeitpunkt, default currentTimestamp]
+   interval=[days/hours/weekdays/hourmin, gibt Monatstage, Stunden, Wochentage oder Stunden:Minuten genaue Preisstatistik, nur bei filter=[all/id]]
+   id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]
+   Author: Graef, Rust"""
 
 
 @page.route('/api/preise')
@@ -42,8 +42,8 @@ def preise():
 
 
 """Anzeige von Tankstellen mit der URL /tankstellen und den URL-Parametern:
-id = [tankstellenID, nur wenn nach ID gefiltert werden soll!
-Author: Rust"""
+   id = [tankstellenID, nur wenn nach ID gefiltert werden soll!
+   Author: Graef, Rust"""
 
 
 @page.route('/api/tankstellen')
@@ -81,10 +81,11 @@ def tankstellen():
 
 
 """Ermittelt eine Liste von Preisen, orientiert an Stunden [hours], Wochentagen [weekdays] oder Monatstagen [days], 
-nach IDs aufgeteilt oder nicht.
-Stunden [hours],  Tage [days], Wochentage [weekdays] oder Stunden:Minuten [hourmin] können angegeben werden.
-begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
-id angeben um nach der id zu filtern"""
+   nach IDs aufgeteilt oder nicht.
+   Stunden [hours],  Tage [days], Wochentage [weekdays] oder Stunden:Minuten [hourmin] können angegeben werden.
+   begin und end für den aktuellen Tag nicht angeben, ansonsten den Tag mit Stunden angeben.
+   id angeben um nach der id zu filtern
+   Author: Graef"""
 
 
 def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d 00:00:00"),
@@ -166,7 +167,7 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
 
 
 """Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten.
-Author: Rust"""
+   Author: Graef"""
 
 
 def durchschnittsWerte(begin, end):

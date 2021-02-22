@@ -20,7 +20,8 @@ backend_url_prefix = "http://localhost"
 tankstellen_id = ""
 
 """Funktion zur Rückgabe der Preisdaten einer Tankstelle.
-   Rückgarbe als list"""
+   Rückgabe als list
+   Author: Graef"""
 
 
 def get_preis_data(tankstellen_id, begin="2021-02-01 00:00:00", end="2021-02-01 23:59:59"):
@@ -34,7 +35,7 @@ def get_preis_data(tankstellen_id, begin="2021-02-01 00:00:00", end="2021-02-01 
 
 
 """Funktion zur Rückgabe der viertel Stundenweisen Durchschnittspreise.
-Author: Rust"""
+   Author: Graef, Rust"""
 
 
 def get_preis_avg(begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
@@ -269,7 +270,7 @@ def tankstelle(tankstelle_id):
 
 
 """Fragt ab ob ein Benutzer eine bestimmte Tankstelle favorisiert hat.
-Author: Rust"""
+   Author: Graef, Rust"""
 
 
 def isFavorite(benutzerid, tankstellenid):
