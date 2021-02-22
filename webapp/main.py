@@ -29,8 +29,7 @@ def login():
         cursor.execute('SELECT * FROM Benutzer WHERE benutzername = %s', (benutzername,))
         account = cursor.fetchone()
         cursor.close()
-        db.commit()
-        if account[2] == hash_sha256(password + account[3]):
+        if account is not None and account[2] == hash_sha256(password + account[3]):
             session['loggedin'] = True
             session['id'] = account[0]
             session['benutzername'] = account[1]
