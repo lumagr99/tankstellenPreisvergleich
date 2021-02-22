@@ -15,7 +15,8 @@ app.register_blueprint(tankstelle.page)
 app.register_blueprint(service.page)
 app.secret_key = 'FlaskLoginTest'
 
-"""Verwaltet den Login eines Benutzers."""
+"""Verwaltet den Login eines Benutzers.
+Author: Rust"""
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -39,7 +40,8 @@ def login():
     return render_template('login.html', msg=msg)
 
 
-"""Verwaltet den Logout eines Benutzers."""
+"""Verwaltet den Logout eines Benutzers.
+Author: Rust"""
 
 
 @app.route('/logout', methods=['GET'])
@@ -95,7 +97,8 @@ def createAccount(benutzername, password):
     return msg
 
 
-"""Hasht einen angegeben String mit SHA 256."""
+"""Hasht einen angegeben String mit SHA 256.
+Author: Rust"""
 
 
 def hash_sha256(text_string):

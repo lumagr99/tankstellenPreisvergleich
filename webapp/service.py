@@ -15,7 +15,8 @@ filter=[all/durchschnitt],
 begin=[StartZeitpunkt, default 2021-01-15 00:00:00],
 end=[endZeitpunkt, default currentTimestamp]
 interval=[days/hours/weekdays/hourmin, gibt Monatstage, Stunden, Wochentage oder Stunden:Minuten genaue Preisstatistik, nur bei filter=[all/id]]
-id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]"""
+id = [id, gibt Preisstatistik für eine ID, nur bei filter=id]
+Author: Rust"""
 
 
 @page.route('/api/preise')
@@ -41,7 +42,8 @@ def preise():
 
 
 """Anzeige von Tankstellen mit der URL /tankstellen und den URL-Parametern:
-id = [tankstellenID, nur wenn nach ID gefiltert werden soll!"""
+id = [tankstellenID, nur wenn nach ID gefiltert werden soll!
+Author: Rust"""
 
 
 @page.route('/api/tankstellen')
@@ -163,7 +165,8 @@ def getTankstellenPreis(interval="days", begin=datetime.now().strftime("%Y-%m-%d
     return ret
 
 
-"""Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten."""
+"""Berechnet den Durchschnittswert der Kraftstoffpreise zwischen zwei Zeitpunkten.
+Author: Rust"""
 
 
 def durchschnittsWerte(begin, end):

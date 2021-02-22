@@ -33,7 +33,8 @@ def get_preis_data(tankstellen_id, begin="2021-02-01 00:00:00", end="2021-02-01 
     return data
 
 
-"""Funktion zur Rückgabe der viertel Stundenweisen Durchschnittspreise."""
+"""Funktion zur Rückgabe der viertel Stundenweisen Durchschnittspreise.
+Author: Rust"""
 
 
 def get_preis_avg(begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
@@ -267,7 +268,8 @@ def tankstelle(tankstelle_id):
                            markedFav=isFavorite(benutzerid, tankstellen_id))
 
 
-"""Fragt ab ob ein Benutzer eine bestimmte Tankstelle favorisiert hat."""
+"""Fragt ab ob ein Benutzer eine bestimmte Tankstelle favorisiert hat.
+Author: Rust"""
 
 
 def isFavorite(benutzerid, tankstellenid):
