@@ -21,7 +21,7 @@ tankstellen_id = ""
 
 """Funktion zur Rückgabe der Preisdaten einer Tankstelle.
    Rückgabe als list
-   Author: Graef"""
+   Author: Graef, Kloos"""
 
 
 def get_preis_data(tankstellen_id, begin="2021-02-01 00:00:00", end="2021-02-01 23:59:59"):
@@ -35,7 +35,7 @@ def get_preis_data(tankstellen_id, begin="2021-02-01 00:00:00", end="2021-02-01 
 
 
 """Funktion zur Rückgabe der viertel Stundenweisen Durchschnittspreise.
-   Author: Graef, Rust"""
+   Author: Graef, Kloos, Rust"""
 
 
 def get_preis_avg(begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
@@ -48,7 +48,8 @@ def get_preis_avg(begin="2021-01-17 00:00:00", end="2021-01-17 23:59:59"):
     return result
 
 
-"""Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle"""
+"""Funktion zum zeichnen eines Plots der Preisentwicklung einer Tankstelle.
+   Author: Kloos"""
 
 
 @page.route("/plot_png/<tankstelle_id>/<datum>/<display_e5_avg>/<display_e10_avg>/<display_diesel_avg>")
@@ -103,7 +104,8 @@ def plot_png(tankstelle_id, datum, display_e5_avg, display_e10_avg, display_dies
     return Response(output.getvalue(), mimetype='image/png')  # URL für Graph(png) zuruckgeben
 
 
-"""Funktion zurkontrolle, ob der Preis einer sorten duchgänig 0 ist"""
+"""Funktion zurkontrolle, ob der Preis einer sorten duchgänig 0 ist
+   Author: Kloos"""
 
 
 def preis_is_zero(preis_list):
@@ -114,7 +116,8 @@ def preis_is_zero(preis_list):
     return zero_count == len(preis_list)
 
 
-"""Funktion zu erstellung eines Plots aus den gegebenen daten einer Tankstelle"""
+"""Funktion zu erstellung eines Plots aus den gegebenen daten einer Tankstelle.
+   Author: Kloos"""
 
 
 def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, preise_e10_avg, preise_diesel_avg,
@@ -171,7 +174,8 @@ def create_figure(zeiten, preis_e5, preis_e10, preis_diesel, preise_e5_avg, prei
     return fig
 
 
-"""seite mit Der Preisentwicklung einer Tankstelle"""
+"""seite mit Der Preisentwicklung einer Tankstelle.
+   Author: Kloos"""
 
 
 @page.route("/tankstelle/<tankstelle_id>", methods=['GET', 'POST'])
