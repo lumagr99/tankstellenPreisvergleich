@@ -26,7 +26,7 @@ tankstellen_id = ""
 
 def get_preis_data(tankstellen_id, begin="2021-02-01 00:00:00", end="2021-02-01 23:59:59"):
     cursor = db.cursor()
-    cursor.execute("SELECT id, round(avg(e5), 3) as e5, round(avg(e10), 3) as e10, round(avg(diesel), 2) as diesel, "
+    cursor.execute("SELECT id, round(avg(e5), 3) as e5, round(avg(e10), 3) as e10, round(avg(diesel), 3) as diesel, "
                    "CONCAT(HOUR(timedate), ':' , MINUTE(timedate)) as hours FROM Preise where id = %s and "
                    "timedate between %s and %s group by hours, id", (tankstellen_id, begin, end,))
     data = cursor.fetchall()
